@@ -634,12 +634,9 @@
         const CHANNELS_URL = "https://iptv-org.github.io/api/channels.json";
 
         // ---------- FUENTES EPG (XMLTV) ----------
-        // El orden es prioridad: si un canal ya tiene guía de una fuente anterior, las siguientes no lo pisan.
-        // Las que no existan o fallen se saltean solas.
         const ES1 = n => `https://epgshare01.online/epgshare01/epg_ripper_${n}.xml.gz`;
         const GTV = (carpeta, n) => `https://raw.githubusercontent.com/globetvapp/epg/main/${carpeta}/${n}.xml`;
         const XMLTV_SOURCES = [
-            // Argentina
             ES1('AR1'),
             "https://iptv-epg.org/files/epg-ar.xml",
             "https://www.open-epg.com/files/argentina1.xml",
@@ -648,7 +645,6 @@
             "https://www.open-epg.com/files/argentina4.xml",
             GTV('Argentina', 'argentina1'), GTV('Argentina', 'argentina2'),
             GTV('Argentina', 'argentina3'), GTV('Argentina', 'argentina4'),
-            // Latinoamérica (canales .lat / .us de cable)
             ES1('MX1'), GTV('Mexico', 'mexico1'), GTV('Mexico', 'mexico2'),
             ES1('CL1'), GTV('Chile', 'chile1'),
             ES1('CO1'), GTV('Colombia', 'colombia1'),
@@ -659,19 +655,15 @@
             "https://iptv-epg.org/files/epg-mx.xml",
             "https://iptv-epg.org/files/epg-cl.xml",
             "https://iptv-epg.org/files/epg-co.xml",
-            // Deportes
             ES1('DIRECTVSPORTS1'), ES1('BEIN1'), ES1('US_SPORTS1'), GTV('Sports', 'sports1'),
-            // Internacionales (HBO, CNN, DAZN, Eurosport, FIFA+, etc.)
             ES1('ES1'), GTV('Spain', 'spain1'),
             ES1('US2'), ES1('US1'), GTV('Usa', 'usa1'),
             ES1('FR1'), GTV('France', 'france1'),
             ES1('UK1'), GTV('Unitedkingdom', 'unitedkingdom1'),
-            // Streaming gratuito / FAST
             ES1('DISTROTV1'), ES1('PLEX1')
         ];
 
         const LOGO_PFX = { i: 'https://i.imgur.com/', w: 'https://upload.wikimedia.org/wikipedia/commons/', b: 'https://i.ibb.co/', o: 'https://images.open-epg.com/' };
-        // Wikimedia rompe los thumbnails de tamaños raros o más grandes que el original: usamos el archivo original.
         const unthumb = u => u.replace(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/[a-z]+\/)thumb\/(\w\/\w\w\/[^/]+)\/[^/]+$/, '$1$2');
         const logoUrl = l => !l ? null : unthumb(/^https?:/.test(l) ? l : (LOGO_PFX[l.slice(0, l.indexOf(':'))] || '') + l.slice(l.indexOf(':') + 1));
         const channels = `
@@ -840,7 +832,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
 
         const $ = id => document.getElementById(id);
         const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-        // Normalizadores para emparejar canales con la guía (sin tildes, sin sufijos de país, sin palabras genéricas)
         const base = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\.[a-z]{2,3}$/, '');
         const norm = s => base(s).replace(/\b(hd|tv|channel|canal)\b/g, '').replace(/[^a-z0-9]/g, '');
         const norm2 = s => base(s).replace(/\b(hd|sd|tv|channel|canal|argentina|latinoamerica|latam|latin|america|international|internacional|ar|mx|us)\b/g, '').replace(/[^a-z0-9]/g, '');
@@ -877,7 +868,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
         let favs = new Set(store.get('ip_favs', []));
 
         // ---------- LOGOS ----------
-        // Cadena de intentos por canal: logo propio -> vía proxy -> logo de iptv-org -> vía proxy -> iniciales
         function logoChain(ch) {
             const a = [];
             [ch.logo, ch.repo, ch.alt].forEach(u => { if (u && !a.includes(u)) a.push(u, buildProxyUrl(u)); });
@@ -926,7 +916,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             return m;
         }
         async function loadLogos() {
-            // m = logos de iptv-org por id de canal; sirven de respaldo para TODOS los canales
             const apply = m => {
                 channels.forEach(c => { if (m[c.id]) c.alt = unthumb(m[c.id]); });
                 renderChannels();
@@ -955,7 +944,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             store.set('ip_logos', m); apply(m);
         }
 
-        // Logos de tv-logo/tv-logos (PNG 512px pensados para fondo oscuro), buscados por nombre en el repo de GitHub
         const TVL_FOLDERS = ['argentina', 'world-latin-america', 'united-states', 'spain', 'france', 'united-kingdom', 'international', 'mexico', 'world-europe'];
         const TVL_RAW = 'https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/';
         const LOGO_ALIAS = {
@@ -1022,7 +1010,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             }
             return null;
         }
-        // Descarga con máximo 3 pedidos en simultáneo
         function pool(n) {
             let active = 0; const q = [];
             const go = () => {
@@ -1112,7 +1099,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             m.classList.toggle('on', !!text);
             m.classList.toggle('err', !!retry);
         }
-        // Si el navegador bloquea el autoplay, saca el "Cargando…" y deja el botón de play a la vista
         const tryPlay = () => video.play().catch(() => { setMsg(''); syncPlay(); });
         function streamFail() { setMsg(`No se pudo cargar ${currentChannel.name}. Puede que el canal esté caído.`, true); }
 
@@ -1158,7 +1144,7 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
         video.addEventListener('error', () => currentChannel && !hlsInstance && streamFail());
         $('btn-retry').onclick = () => { retries = 0; loadStream(); };
 
-        // Controles del player: se ocultan solos a los 3 s mientras reproduce
+        // Controles del player
         const wrap = $('video-wrapper'), btnCenter = $('btn-center'), btnMute = $('btn-mute'),
               volRange = $('vol-range'), btnPip = $('btn-pip');
         let uiTimer = null;
@@ -1180,11 +1166,13 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
 
         wrap.addEventListener('mousemove', showUi);
         wrap.addEventListener('mouseleave', () => { if (!video.paused) wrap.classList.remove('ui'); });
+        
+        // MODIFICACIÓN SOLICITADA: Clic en la pantalla solo muestra/oculta la UI, NUNCA hace pausa.
         wrap.addEventListener('click', e => {
             if (e.target.closest('button, input')) return;
-            if (!wrap.classList.contains('ui')) return showUi();
-            togglePlay();
+            showUi();
         });
+        
         wrap.addEventListener('dblclick', e => { if (!e.target.closest('button, input')) btnFullscreen.click(); });
 
         function syncVol() {
@@ -1220,7 +1208,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
         document.addEventListener('fullscreenchange', fsIcon);
         document.addEventListener('webkitfullscreenchange', fsIcon);
 
-        // Pantalla completa y rotación horizontal automática
         btnFullscreen.onclick = async () => {
             const d = document;
             if (d.fullscreenElement || d.webkitFullscreenElement) {
@@ -1248,6 +1235,51 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
                 try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch(e) {}
             }
         });
+
+        // ---------- SOPORTE DE CONTROL REMOTO Y TECLADO ----------
+        document.addEventListener('keydown', e => {
+            if (e.target.tagName === 'INPUT') return;
+            const k = e.key.toLowerCase();
+            
+            // Cambio de canal (Flechas arriba/abajo o botones de canal del control físico)
+            if (e.key === 'ArrowUp' || e.key === 'ChannelUp') {
+                e.preventDefault();
+                stepChannel(-1);
+            }
+            else if (e.key === 'ArrowDown' || e.key === 'ChannelDown') {
+                e.preventDefault();
+                stepChannel(1);
+            }
+            // Reproducir / Pausa por atajo o tecla multimedia dedicada
+            else if (k === 'k' || e.key === 'MediaPlayPause') {
+                e.preventDefault();
+                togglePlay();
+            }
+            // Silencio
+            else if (k === 'm' || e.key === 'AudioVolumeMute') {
+                btnMute.click();
+            }
+            // Subir volumen con control remoto
+            else if (e.key === 'AudioVolumeUp' || e.key === 'VolumeUp') {
+                e.preventDefault();
+                video.muted = false;
+                video.volume = Math.min(1, video.volume + 0.05);
+            }
+            // Bajar volumen con control remoto
+            else if (e.key === 'AudioVolumeDown' || e.key === 'VolumeDown') {
+                e.preventDefault();
+                video.muted = false;
+                video.volume = Math.max(0, video.volume - 0.05);
+            }
+        });
+
+        // Media Session API para controles multimedia del sistema/TV
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('nexttrack', () => stepChannel(1));
+            navigator.mediaSession.setActionHandler('previoustrack', () => stepChannel(-1));
+            navigator.mediaSession.setActionHandler('play', () => video.play());
+            navigator.mediaSession.setActionHandler('pause', () => video.pause());
+        }
 
         // ---------- LISTA DE CANALES ----------
         const cats = [['ALL', 'Todos'], ['★ Favoritos', '★ Favoritos'], ...[...new Set(channels.map(c => c.group))].map(g => [g, g])];
@@ -1297,14 +1329,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             selectedCategory = chip.dataset.cat;
             renderChannels();
         };
-        document.addEventListener('keydown', e => {
-            if (e.target.tagName === 'INPUT') return;
-            const k = e.key.toLowerCase();
-            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); stepChannel(e.key === 'ArrowDown' ? 1 : -1); }
-            else if ((k === ' ' && !e.target.closest('button')) || k === 'k') { e.preventDefault(); togglePlay(); }
-            else if (k === 'm') btnMute.click();
-            else if (k === 'f') btnFullscreen.click();
-        });
 
         // ---------- PWA ----------
         let deferredPrompt = null;
