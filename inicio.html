@@ -622,7 +622,7 @@
         </div>
     </div>
 
-    <!-- HLS.JS (versión fija) -->
+    <!-- HLS.JS -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 
     <script>
@@ -666,165 +666,249 @@
         const LOGO_PFX = { i: 'https://i.imgur.com/', w: 'https://upload.wikimedia.org/wikipedia/commons/', b: 'https://i.ibb.co/', o: 'https://images.open-epg.com/' };
         const unthumb = u => u.replace(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/[a-z]+\/)thumb\/(\w\/\w\w\/[^/]+)\/[^/]+$/, '$1$2');
         const logoUrl = l => !l ? null : unthumb(/^https?:/.test(l) ? l : (LOGO_PFX[l.slice(0, l.indexOf(':'))] || '') + l.slice(l.indexOf(':') + 1));
-        const channels = `
-Telefe.ar|Telefe HD|Argentina|TELEFE_HD/index.m3u8|w:thumb/c/cc/Telefe_%28nuevo_logo%29.png/960px-Telefe_%28nuevo_logo%29.png
-NetTV.ar|NET TV|Argentina|Net_TV/index.m3u8|o:16782362.png
-A24.ar|A24 HD|Noticias|A24/index.m3u8|i:LnXQkIU.png
-C5N.ar|C5N HD|Noticias|C5N/index.m3u8|i:5ZNZYjO.png
-CNNInternational.us|CNN International|Noticias|CNN_International/index.m3u8
-TigoSports.py|Tigo Sports|Deportes|Tigo_Sports/tracks-v1a1/mono.m3u8
-DAZN1.es|DAZN 1 HD|Deportes|DAZN_1_HD/index.m3u8
-Eurosport1.fr|Eurosport 1 HD|Deportes|Eurosport_1_HD/index.m3u8
-Eurosport2.fr|Eurosport 2 HD|Deportes|Eurosport_2_HD/index.m3u8
-TraceSportStars.fr|Trace Sport Stars|Deportes|Trace_Sport_Stars/index.m3u8
-HBO.us|HBO HD|Cine y Series|HBO_HD/index.m3u8
-Cinemax.us|Cinemax HD|Cine y Series|Cinemax_HD/index.m3u8
-AXN.lat|AXN HD|Cine y Series|AXN_HD/index.m3u8|w:thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png
-TNT.lat|TNT HD|Cine y Series|TNT/index.m3u8
-Space.lat|Space HD|Cine y Series|Space_HD/index.m3u8
-FX.lat|FX HD|Cine y Series|FX_HD/index.m3u8|w:thumb/4/4d/FX_International_logo.svg/960px-FX_International_logo.svg.png
-AMC.lat|AMC HD|Cine y Series|AMC_HD/index.m3u8
-WarnerChannel.lat|Warner Channel|Cine y Series|Warner_Channel_HD/index.m3u8
-SonyChannel.lat|Sony HD|Cine y Series|Sony_HD/index.m3u8|w:thumb/b/b9/Sony_Channel_Logo.png/960px-Sony_Channel_Logo.png
-StudioUniversal.lat|Studio Universal|Cine y Series|Studio_Universal_HD/index.m3u8
-UniversalTV.lat|Universal Channel|Cine y Series|Universal_Channel/index.m3u8
-ParamountNetwork.lat|Paramount HD|Cine y Series|Paramount_Channel_HD/index.m3u8|https://logodownload.org/wp-content/uploads/2014/07/paramount-logo-0-1536x1536.png
-Pasiones.lat|Pasiones HD|Cine y Series|Pasiones_HD/index.m3u8
-Lifetime.lat|Lifetime HD|Cine y Series|LIFETIME_HD/index.m3u8
-TCM.lat|TCM|Cine y Series|TCM/index.m3u8
-DisneyChannel.lat|Disney Channel|Infantiles|Disney_Channel/index.m3u8|w:f/ff/2024_Disney_Channel_text_logo.svg
-DisneyJunior.lat|Disney Junior|Infantiles|Disney_Junior/index.m3u8|w:e/e3/2024_Disney_Jr._Logo.svg
-DiscoveryKids.lat|Discovery Kids|Infantiles|Discovery_Kids/index.m3u8|w:thumb/d/dc/2016_Discovery_Kids_logo.svg/1164px-2016_Discovery_Kids_logo.svg.png
-Cartoonito.lat|Cartoonito|Infantiles|Cartoonito/index.m3u8|https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Cartoonito_logo.svg/1280px-Cartoonito_logo.svg.png
-NickJr.lat|Nick Jr|Infantiles|Nick_Jr/index.m3u8
-Tooncast.lat|Tooncast|Infantiles|Tooncast/index.m3u8
-History.lat|History HD|Documentales|History_HD/index.m3u8
-NatGeoWild.lat|Nat Geo Wild HD|Documentales|Nat_Geo_Wild_HD/index.m3u8
-DiscoveryScience.lat|Discovery Science|Documentales|Discovery_Science_HD/index.m3u8
-InvestigationDiscovery.lat|ID Investigation|Documentales|Discovery_Investigation_HD/index.m3u8
-DiscoveryWorld.lat|Discovery World|Documentales|Discovery_World_HD/index.m3u8
-DiscoveryTurbo.lat|Discovery Turbo|Documentales|Discovery_Turbo_HD/index.m3u8
-5tv.ar|5TV Corrientes|Regionales|http://www.coninfo.net:1935/tvcinco/live1/playlist.m3u8|i:mSn7ACs.png
-ABTVBariloche.ar|ABTV Bariloche|Regionales|https://videostream.shockmedia.com.ar/hls/abtvbariloche/abtvbariloche.m3u8|i:l4TSfDr.png
-AdultSwimLatinAmerica.us|Adult Swim|Entretenimiento|https://streamer.metronethn.com/AdultSwim/index.m3u8|w:thumb/e/e4/Adult_Swim_2003_logo.svg/960px-Adult_Swim_2003_logo.svg.png
-AiredeSantaFe.ar|Aire de Santa Fe|Regionales|https://unlimited1-us.dps.live/airedesantafetv/airedesantafetv.smil/playlist.m3u8|i:60vSWW0.png
-ArgentinisimaSatelital.ar|Argentinísima Satelital|Argentina|https://stream1.sersat.com/hls/argentinisima.m3u8|i:xFgJawa.png
-AzaharesRadiovisualMultimedia.ar|Azahares Radio Multimedia|Música|https://streamyes.alsolnet.com/azaharesfm/live/playlist.m3u8|i:g1BFoSs.png
-BeatsRadio.ar|Beats Radio|Música|https://videostream.shockmedia.com.ar:19360/beatsradio/beatsradio.m3u8|i:zkNUO5p.png
-BVC.ar|BVC|Regionales|https://vivo.solumedia.com:19360/bvnet/bvnet.m3u8|i:I06TSx0.png
-CableImagenArmstrong.ar|Cable Imagen Armstrong|Regionales|https://stream.arcast.com.ar/casse/casse/playlist.m3u8|i:U9NuJQC.png
-Cadena103TV.ar|Cadena 103|Regionales|http://arcast.net:1935/cadena103/cadena103/playlist.m3u8|i:vBsry35.png
-Canal2deUshuaia.ar|Canal 2 de Ushuaia|Regionales|https://nd106.republicaservers.com:4433/hls/c6611/index.m3u8|b:q5NPdK2/canal2-logo.png
-Canal2Gualeguay.ar|Canal 2 Gualeguay|Regionales|https://stream.arcast.net:4443/gualeguay/gualeguay/playlist.m3u8|i:TOlncyp.png
-Canal2Misiones.ar|Canal 2 Misiones|Regionales|https://nd106.republicaservers.com:4433/hls/canal2misioness/index.m3u8|i:YqTNXDf.png
-Canal2NexTVRafaela.ar|Canal 2 NexTV Rafaela|Regionales|https://edge.enhdtv.com/nexthd/index.m3u8|i:hgj3CaR.jpeg
-Canal3Formosa.ar|Canal 3 Formosa|Regionales|https://stmvideo6.livecastv.com/agenfor/agenfor/playlist.m3u8|i:rVDrNIy.png
-Canal3LaPampa.ar|Canal 3 La Pampa|Regionales|https://stream.arcast.com.ar/c3lapampa/ngrp:c3lapampa_all/playlist.m3u8|i:SsNFudZ.png
-Canal3Pinamar.ar|Canal 3 Pinamar|Regionales|http://intelincloud01.com.ar/hls/cn3/index.m3u8|i:IABFaH1.png
-Canal3Tacural.ar|Canal 3 Tacural|Regionales|http://vivo.canal3tacural.com.ar:8081/hls/stream.m3u8|i:RKvSa52.jpeg
-Canal4Esquel.ar|Canal 4 Esquel|Regionales|https://stream.arcast.com.ar/canal4esquel/canal4esquel/playlist.m3u8|i:6kbOr16.png
-Canal4Jujuy.ar|Canal 4 Jujuy|Regionales|https://5cd577a3dd8ec.streamlock.net/CANAL4/smil:CANAL4.smil/playlist.m3u8|i:qB6I274.png
-Canal4Posadas.ar|Canal 4 Posadas|Regionales|https://iptv.ixfo.com.ar:30443/live/C4POS/playlist.m3u8|i:tElJr3e.png
-Canal4SanJuan.ar|Canal 4 San Juan|Regionales|https://streamlov.alsolnet.com/canal4sanjuan/live/playlist.m3u8|i:MsCnwRA.png
-Canal4Teleaire.ar|Canal 4 Teleaire|Regionales|https://stmvideo6.livecastv.com/canal4/canal4/playlist.m3u8|i:XyiNvbY.png
-Canal4VillaDolores.ar|Canal 4 Villa Dolores|Regionales|https://stmvideo3.livecastv.com/canal4vd/canal4vd/playlist.m3u8|i:ZKSnGfw.png
-Canal5DelPueblo.ar|Canal 5 Del Pueblo|Regionales|https://stmv4.voxtvhd.com.br/canal5pueblo/canal5pueblo/playlist.m3u8|b:XzcYYMc/Canal-5-alcorta-ver.jpg
-Canal5SantaFe.ar|Canal 5 Santa Fe|Regionales|https://stream.arcast.com.ar/c5sf/c5sf/playlist.m3u8|i:WX0esjQ.png
-Canal5TVChepes.ar|Canal 5 TV Chepes|Regionales|https://videostream.shockmedia.com.ar:19360/canal5alfatvchepes/canal5alfatvchepes.m3u8|i:AzEqroq.png
-Canal6Posadas.ar|Canal 6 Posadas|Regionales|https://iptv.ixfo.com.ar:30443/live/c6digital/playlist.m3u8|i:OamBiS5.png
-Canal6VientoRecio.ar|Canal 6 Viento Recio|Religiosos|https://stmvideo6.livecastv.com/vientorecio/vientorecio/playlist.m3u8|i:liyTNzK.png
-Canal7Jujuy.ar|Canal 7 Jujuy|Regionales|https://stream.arcast.live/canal7jujuy/ngrp:canal7jujuy_all/playlist.m3u8|i:K0jk8p4.png
-Canal7Neuquen.ar|Canal 7 Neuquén|Regionales|https://stream.arcast.com.ar/c7nq/ngrp:c7nq_all/playlist.m3u8|b:BrvQsWm/C7neuquenlogo2023.png
-Canal7Salta.ar|Canal 7 Salta|Regionales|https://vivo.solumedia.com:19360/cooperativa/cooperativa.m3u8|i:CudG6sl.png
-Canal7TV.ar|Canal 7 Santiago del Estero|Regionales|https://stream.arcast.com.ar/envivo/castv/playlist.m3u8|i:iJMH0UK.png
-Canal9Link.ar|Canal 9 Link|Entretenimiento|https://617c5175c970b.streamlock.net:4444/9linklivert/smil:9linkmultibr.smil/playlist.m3u8|https://audios.radiosnet.com.ar/imgwikidat/img_cuerpo/canal+9+buenos+aires9.jpg
-Canal9Litoral.ar|Canal 9 Litoral|Regionales|https://stream.arcast.live/ahora/ahora/playlist.m3u8|w:a/ad/Canal_9_Litoral_2021.png
-Canal9Resistencia.ar|Canal 9 Resistencia|Regionales|http://coninfo.net:1935/9linklivert/smil:9linkmultibr.smil/playlist.m3u8|i:xqgRFpC.png
-Canal13Jujuy.ar|Canal 13 Jujuy TV|Religiosos|https://genexservicios.com:19360/canal13jujuy/canal13jujuy.m3u8|i:lmKLiJ3.jpg
-Canal13LaRioja.ar|Canal 13 La Rioja|Regionales|http://arcast.net:1935/mp/mp/playlist.m3u8|i:OI97Sgq.png
-Canal13SanLuis.ar|Canal 13 San Luis|Regionales|https://stream.radiosmundiales.com:19360/sanluismas/sanluismas.m3u8|i:NcfMC29.png
-Canal21TV.ar|Canal 21 TV|Regionales|https://iptv.ixfo.com.ar:30443/c21tv/hd/c21tv/playlist.m3u8|i:Am7yMXg.png
-Canal22.ar|Canal 22|Regionales|https://5f700d5b2c46f.streamlock.net/canal22/canal22/playlist.m3u8|i:R4wXVxf.png
-Canal26.ar|Canal 26|Noticias|https://stream-gtlc.telecentro.net.ar/hls/canal26hls/main.m3u8|w:thumb/c/c5/Canal_26_logo_%282022%29.svg/500px-Canal_26_logo_%282022%29.svg.png
-Canal50Morteros.ar|Canal 50 Morteros|Regionales|https://online.coopmorteros.coop/canal50/vivo.m3u8|i:IDhgBav.png
-Canal79LaCosta.ar|Canal 79 La Costa|Regionales|https://streamconex.com:19360/lacosta/lacosta.m3u8|i:HYuSqJy.png
-Canal79MardelPlata.ar|Canal 79 Mar del Plata|Regionales|https://streamconex.com:19360/mardelplata/mardelplata.m3u8|i:I93ypGY.png
-Canal79Puan.ar|Canal 79 Puan|Regionales|https://streamconex.com:19360/puan/puan.m3u8|i:HYuSqJy.png
-Canal79SantaClaradelMar.ar|Canal 79 Santa Clara del Mar|Regionales|https://streamconex.com:19360/santaclara-1/santaclara-1.m3u8|i:I93ypGY.png
-Canal99Miramar.ar|Canal 99 Miramar|Regionales|https://vivo.solumedia.com:19360/cardinal/cardinal.m3u8|i:PblsZxz.jpeg
-CanalE.ar|Canal E|Noticias|https://unlimited1-us.dps.live/perfiltv/perfiltv.smil/playlist.m3u8|b:y4pkxH3/Qtc8-M2-PG-400x400.jpg
-CanalOrbe21.ar|Canal Orbe 21|Religiosos|https://stream.arcast.net:4443/canal21/ngrp:canal21_all/playlist.m3u8|i:USD6Wn8.png
-CanalProvincial.ar|Canal Provincial|Regionales|https://streaming.telered.com.ar/provincial/streaming/mystream.m3u8|i:bXHHtcb.png
-CanalPulpoTV.ar|Canal Pulpo TV|Entretenimiento|https://vs20.live.opencaster.com/canalpulpotv_bdeee6e2/index.m3u8|https://new.opencaster.com/uploads/logos/logo_306_1756336707.png
-CanalSantaMaria.ar|Canal Santa María|Religiosos|https://streaming.telered.com.ar/santa-maria/streaming/mystream.m3u8|https://www.canalsantamaria.com.ar/images/santamaria_logo.jpg
-CanalShowsport.ar|Canal Showsport|Deportes|https://livestream.lumpentv.com.ar/hls/lumpen.m3u8|i:0L9tW3Z.png
-CanalTDC.ar|Canal TDC|Noticias|https://tdcserver.com:19360/tdconlione-2/tdconlione-2.m3u8|i:nPG38B2.png
-CanalUniversidad.ar|Canal Universidad|Educación|https://videostream.shockmedia.com.ar/hls/canaluniversidadmdp/canaluniversidadmdp.m3u8|i:trmPKYw.png
-CarasTV.ar|Caras TV|Entretenimiento|https://unlimited1-us.dps.live/carastv/carastv.smil/playlist.m3u8|i:7dl4yQY.jpeg
-CatamarcaTV.ar|Catamarca TV|Regionales|https://stream.arcast.com.ar/canal7catamarca/ngrp:canal7catamarca_all/playlist.m3u8?DVR=|i:CEuPoqG.png
-CeltaTV.ar|Celta TV|Regionales|https://vivo.solumedia.com:19360/celta/celta.m3u8|i:rwoIF4w.png
-ChacoTV.ar|Chaco TV|Regionales|https://wowzasrv.chaco.gov.ar/Streamtv/chacotv/playlist.m3u8|i:b6RerDw.png
-ChacraTV.ar|Chacra TV|Regionales|https://5f700d5b2c46f.streamlock.net/chacratv/chacratv/playlist.m3u8|i:gy7AEfO.png
-ChamameTV.ar|Chamamé TV|Música|https://srv4.zcast.com.br/chamametv/chamametv/playlist.m3u8|i:JigzJck.png
-Cinecanal.us|Cinecanal|Cine y Series|http://45.162.193.35/CINECANAL/index.m3u8|w:thumb/e/e6/CinecanalLA.png/960px-CinecanalLA.png
-CiudadMagica.ar|Ciudad Mágica|Entretenimiento|https://lbgo.bozztv.com/ssh101/ssh101/verycoolfgr/playlist.m3u8|i:HJkSz2U.png
-CorreaRadiovision.ar|Correa Radiovisión|Regionales|https://stream.arcast.net:4443/correadigital/canal12/playlist.m3u8|i:bNCGzjf.jpeg
-CorrientesTV.ar|Corrientes TV|Regionales|https://617c5175c970b.streamlock.net:4444/13max2/live13maxtv2026/playlist.m3u8|i:7PBkvRp.png
-CosmosTv.ar|Cosmos TV|Cine y Series|https://tv.mediacp.eu:19360/cosmos/cosmos.m3u8|https://i0.wp.com/fmcosmos.com/wp-content/uploads/2021/11/COSMOS-TV.png
-CumbiaMix.ar|Cumbia Mix|Música|https://cloud.tvomix.com/CUMBIAMIX/index.m3u8|https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6901dfd41a05195b77301d7b/b306e57e4_Logo-TV-C.png
-ELatinAmerica.us|E! Latinoamérica|Entretenimiento|http://bantel-cdn1.iptvperu.tv:1935/btnscrtn/entertainment.stream/playlist.m3u8|w:thumb/9/96/E%21_Logo_2012.svg/500px-E%21_Logo_2012.svg.png
-EcoTV.ar|Eco TV|Regionales|https://stream.arcast.com.ar/ecotv/ngrp:ecotv_all/playlist.m3u8|i:V2ldYVd.jpg
-FIFAPlus.uk|FIFA+|Deportes|https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8|w:thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png
-FolcloreandoTV.ar|Folcloreando TV|Música|https://stmvideo6.livecastv.com/radioactivasanjuan/radioactivasanjuan/playlist.m3u8|https://folcloreando.com/wp-content/uploads/elementor/thumbs/logo-qvcz16ulfxe7qqvftihvlcoku8l2hux59qcndiy3qo.png
-IPNoticias.ar|IP Noticias|Noticias|https://twitch-m3u8.bastypro112.workers.dev/argentina_12tw/index.m3u8|i:dbu9nx4.png
-ItelTVCanal2.ar|Itel TV Canal 2|Regionales|https://proxystream.iteltv.com.ar/output/iteltv/playlist.m3u8|i:OxmpRDx.png
-KpopMix.ar|Kpop Mix|Música|https://cloud.tvomix.com/KPOPMIX/index.m3u8|https://tvomix.com/Logos/Kpopmix.png
-La100.ar|La 100|Música|https://mdstrm.com/live-stream-playlist/68b74fd1d6512526f1f7c75a.m3u8|https://cloudfront-us-east-1.images.arcpublishing.com/radiomitre/CZJMM4BJVRFANO4VGMMYWSTEVE.png
-LAMIL35TV.ar|LAMIL35 TV|Infantiles|https://vd01.streaminghd.net.ar:3349/live/bzuctkgnlive.m3u8|https://www.appcreator24.com/srv/imgs/gen/3544498_ico.png
-MasFM.ar|Más FM 95.9|Música|https://vivo.solumedia.com:19360/masfm/masfm.m3u8|i:TJ4gWQM.png
-MercurioNoticias.ar|Mercurio Noticias|Noticias|https://videostream.shockmedia.com.ar/hls/mercuriotv/mercuriotv.m3u8|i:sfd87LX.png
-MetroTV.ar|Metro TV|Entretenimiento|https://streamtv12.ddns.net:5443/LiveApp/streams/193945633734205616732920.m3u8|i:7f7M7zl.png
-MisionesCuatro.ar|Misiones Cuatro|Regionales|https://iptv.ixfo.com.ar:30443/live-HD/MISIONES4/playlist.m3u8|i:HXRpRlK.png
-NeoTV.ar|Neo TV|Regionales|https://videostream.shockmedia.com.ar:19360/neotvdigital/neotvdigital.m3u8|i:Xtu85tb.png
-NGFederal.ar|NG Federal|Regionales|http://www.coninfo.net:1935/tvlink/live/playlist.m3u8|i:lJCIqYn.png
-PowerMaxRadioTV.ar|Power Max Radio TV|Música|https://videostream.shockmedia.com.ar:19360/radio1045/radio1045.m3u8|b:qgZLYDj/channels4-profile-6.jpg
-PowerHD.ar|Power HD|Regionales|https://live2.tensila.com/1-1-1.power-tv/hls/master.m3u8|i:15gMDG0.png
-QuanticaTV.ar|Quantica TV|Noticias|https://videostream.shockmedia.com.ar:19360/quanticatv/quanticatv.m3u8|i:6f8EYC2.jpeg
-QuieroMusicaenmiIdioma.ar|Quiero Música en mi Idioma|Música|http://177.234.249.178:8888/MTV/index.m3u8|i:RO9Dz3X.png
-RadioConexionWebTV.ar|Radio Conexión Web TV|Música|https://tuvideoonline.com.ar:3391/live/radioconexionlive.m3u8|i:pXS38zo.png
-RadioRealpolitik.ar|Radio Realpolitik|Música|https://vivo.solumedia.com:19360/realpolitik/realpolitik.m3u8|i:L9KCdTX.png
-RadioSublimeGraciaTV.ar|Radio Sublime Gracia TV|Religiosos|https://5f700d5b2c46f.streamlock.net/sublime/sublime/playlist.m3u8|b:P9jgTz4/c49b986afb751882bcbee57f9c9b20d7-350x210.png
-RadioTVNeuquen.ar|Radio TV Neuquén|Regionales|https://media.neuquen.gov.ar/rtn/television/playlist.m3u8|i:HXBLozl.png
-RadioUP.ar|Radio UP|Música|https://iptv.ixfo.com.ar:30443/live/RadioUpTvStreaming/playlist.m3u8|https://radioup.com.ar/wp-content/uploads/2025/06/logo-radioup-footer.png
-RadioYguazuTV.ar|Radio Yguazú TV|Música|https://live.enhdtv.com:8081/radioiguazutv/index.m3u8|i:kVi0ICm.png
-Radiocanal.ar|Radiocanal San Francisco|Música|http://204.199.3.2/.m3u8|b:NNyDWsz/download-8.png
-RTN.ar|RTN Neuquén|Regionales|https://media.neuquen.gov.ar/rtn/television/media.m3u8|i:8xqYg4C.png
-SanLuisPlus.ar|San Luis +|Regionales|https://stream.radiosmundiales.com/hls/sanluismas/sanluismas.m3u8|i:bGoGiry.png
-SanPedroTV.ar|San Pedro TV|Regionales|https://iptv.ixfo.com.ar:30443/live/sanpedrotv/playlist.m3u8|i:UkpXogr.png
-SenillosaTV.ar|Senillosa TV|Regionales|https://player.videohost.click/senillosatv/senillosatv/playlist.m3u8|https://yt3.ggpht.com/ytc/AKedOLTrvk7gv0uCQ8QdGREqv6Rtzm4F6UMetdxKub6D=s400-c-k-c0x00ffffff-no-rj
-SicardiTV.ar|Sicardi TV|Regionales|https://vivo.solumedia.com:19360/sicarditv/sicarditv.m3u8|i:W2EUIL2.png
-T5Satelital.ar|T5 Satelital|Regionales|https://stream.t5satelital.blog/hls/t5satelitalweb.m3u8|i:ZcD0rUP.png
-TelePosadas.ar|Tele Posadas|Regionales|https://live20.bozztv.com/giatv/giatv-teleposadaso01/teleposadaso01/playlist.m3u8|i:88MVgwX.png
-Telecinco.ar|TeleCinco Trelew|Regionales|https://videohd.live:19360/8016/8016.m3u8|i:ZDenyAE.png
-TelefeInterior.ar|Telefe Interior|Argentina|http://200.91.32.158:8080/telefehdvalle/index.m3u8|w:thumb/c/cc/Telefe_%28nuevo_logo%29.png/960px-Telefe_%28nuevo_logo%29.png
-Telemax.ar|Telemax|Regionales|https://stream-gtlc.telecentro.net.ar/hls/telemaxhls/main.m3u8|w:thumb/1/13/Telemax_Argentina_%282018%29.png/960px-Telemax_Argentina_%282018%29.png
-TelemundoInternacional.us|Telemundo Internacional|Entretenimiento|http://138.121.15.230:9002/TELEMUNDO/index.m3u8|i:j2O4ndp.png
-TIVTelevision.ar|TIV Televisión|Regionales|https://videohd.live:19360/8008/8008.m3u8|i:gsgXGEj.png
-TNTNovelas.us|TNT Novelas|Cine y Series|http://190.93.224.42/TNT-NOVELAS/index.m3u8|w:thumb/6/67/TNT_Novelas_2025.svg/1920px-TNT_Novelas_2025.svg.png
-TVCanal72.ar|TV Canal 72|Regionales|https://stmv1.voxtvhd.com.br/canal72tv2/canal72tv2/playlist.m3u8|https://tvcanal72.com.ar/wp-content/uploads/2022/08/LOGO-CANAL-72-1-1024x256.png
-TVManaArgentina.ar|TV Maná Argentina|Religiosos|https://w2.manasat.com/tvmana-ar/smil:tvmana-ar.smil/playlist.m3u8|i:jars0mP.png
-TVPublicaFueguina.ar|TV Pública Fueguina|Regionales|https://nd106.republicaservers.com/hls/c8094/index.m3u8|i:4dUvFqa.png
-TVSolidaria.ar|TV Solidaria|Regionales|https://canadaremar2.todostreaming.es/live/argentina-web.m3u8|i:M0fMypR.png
-TVUniversidad.ar|TV Universidad|Educación|https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8|i:0MXsQ25.png
-TyCSports.ar|TyC Sports|Deportes|http://45.181.87.106/TYCSPORTSHD/index.m3u8|w:thumb/5/54/TyC_Sports_logo.svg/960px-TyC_Sports_logo.svg.png
-UnifeTV.ar|Unife TV|Religiosos|https://cdn.mycloudstream.io/hls/live/broadcast/xundwjvp/index.m3u8|i:TLM592m.png
-Uniteve.ar|Uniteve|Regionales|https://vivo.solumedia.com:19360/uniteve/uniteve.m3u8|https://pbs.twimg.com/profile_images/720276300888453120/a_SDOmBc_400x400.jpg
-UrbanMix.ar|Urban Mix|Música|https://cloud.tvomix.com/URBANMIX/index.m3u8|https://tvomix.com/Logos/Urbanmix.png
-VillaManteroTV.ar|Villa Mantero TV|Regionales|https://micanal.ovh/livestreams/515.AUTOOAAZ721F.m3u8|i:mmEenTm.png
-XtremaCartoons.ar|Xtrema Cartoons|Infantiles|https://stmv6.voxtvhd.com.br/xtremacartoons/xtremacartoons/playlist.m3u8|i:X2d8y4e.png
-XtremaCineClasico.ar|Xtrema Cine Clásico|Cine y Series|https://stmv6.voxtvhd.com.br/cineclasico/cineclasico/playlist.m3u8|i:j91M4Yf.png
-XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineterror/cineterror/playlist.m3u8|i:FcaTUym.png`
-        .trim().split("\n").map((l, i) => {
+        
+        // --- GRILLA CORREGIDA: CANALES DE TRANSMISIÓN INDEPENDIENTE/LOCAL ALOJADOS EN REGIONALES ---
+        const rawChannels = [
+            // === ARGENTINA (AIRE / GENERAL NACIONAL) ===
+            "Telefe.ar|Telefe HD|Argentina|http://181.209.37.74:8001/play/a08a/index.m3u8?token=miguel2026|w:thumb/c/cc/Telefe_%28nuevo_logo%29.png/960px-Telefe_%28nuevo_logo%29.png",
+            "ElTrece.ar|el trece HD|Argentina|http://181.209.37.74:8001/play/a07b/index.m3u8?token=miguel2026|w:thumb/3/36/El_Trece_logo_2016.svg/500px-El_Trece_logo_2016.svg.png",
+            "AmericaTV.ar|America TV HD|Argentina|http://181.209.37.74:8001/play/a094/index.m3u8?token=miguel2026|w:thumb/b/be/Am%C3%A9rica_TV_logo_2020.svg/500px-Am%C3%A9rica_TV_logo_2020.svg.png",
+            "ElNueve.ar|el nueve HD|Argentina|http://181.209.37.74:8001/play/a08k/index.m3u8?token=miguel2026|w:thumb/0/07/El_Nueve_logo_2021.svg/500px-El_Nueve_logo_2021.svg.png",
+            "TVPublica.ar|TV Publica HD|Argentina|http://181.209.37.74:8001/play/a0ec/index.m3u8?token=miguel2026|w:thumb/8/8c/Televisi%C3%B3n_P%C3%BAblica_Argentina_logo_2020.svg/500px-Televisi%C3%B3n_P%C3%BAblica_Argentina_logo_2020.svg.png",
+            "NetTV.ar|NET TV|Argentina|Net_TV/index.m3u8|o:16782362.png",
+            "ArgentinisimaSatelital.ar|ARGENTINISIMA|Argentina|http://181.209.37.74:8001/play/a0e7/index.m3u8?token=miguel2026|i:xFgJawa.png",
+
+            // === NOTICIAS ===
+            "TN.ar|TN HD|Noticias|http://181.209.37.74:8001/play/a097/index.m3u8?token=miguel2026|w:thumb/2/23/Todo_Noticias_logo_2016.svg/500px-Todo_Noticias_logo_2016.svg.png",
+            "C5N.ar|C5N|Noticias|http://181.209.37.74:8001/play/a05v/index.m3u8?token=miguel2026|i:5ZNZYjO.png",
+            "LNPlus.ar|La Nacion TV|Noticias|http://181.209.37.74:8001/play/a05y/index.m3u8?token=miguel2026|w:thumb/0/02/LN%2B_logo_2020.svg/500px-LN%2B_logo_2020.svg.png",
+            "A24.ar|A24|Noticias|http://181.209.37.74:8001/play/a05u/index.m3u8?token=miguel2026|i:LnXQkIU.png",
+            "CronicaTV.ar|CRONICA|Noticias|http://181.209.37.74:8001/play/a05w/index.m3u8?token=miguel2026|w:thumb/6/69/Cr%C3%B3nica_TV_logo_2018.png/500px-Cr%C3%B3nica_TV_logo_2018.png",
+            "Canal26.ar|26TV|Noticias|http://181.209.37.74:8001/play/a05x/index.m3u8?token=miguel2026|w:thumb/c/c5/Canal_26_logo_%282022%29.svg/500px-Canal_26_logo_%282022%29.svg.png",
+            "IPNoticias.ar|IP|Noticias|http://181.209.37.74:8001/play/a0dz/index.m3u8?token=miguel2026|i:dbu9nx4.png",
+            "CNNEspanol.us|CNN en Español|Noticias|http://181.209.37.74:8001/play/a093/index.m3u8?token=miguel2026|w:thumb/b/b3/CNN_en_Espa%C3%B1ol_logo.svg/500px-CNN_en_Espa%C3%B1ol_logo.svg.png",
+            "CNNInternational.us|CNN International|Noticias|CNN_International/index.m3u8",
+            "CN23.ar|CN23|Noticias|http://181.209.37.74:8001/play/a0dq/index.m3u8?token=miguel2026",
+            "CanalE.ar|Canal E|Noticias|https://unlimited1-us.dps.live/perfiltv/perfiltv.smil/playlist.m3u8|b:y4pkxH3/Qtc8-M2-PG-400x400.jpg",
+
+            // === DEPORTES ===
+            "TyCSports.ar|TyC Sports HD|Deportes|http://181.209.37.74:8001/play/a06x/index.m3u8?token=miguel2026|w:thumb/5/54/TyC_Sports_logo.svg/960px-TyC_Sports_logo.svg.png",
+            "TNTSports.ar|TNT Sports HD|Deportes|http://181.209.37.74:8001/play/a06z/index.m3u8?token=miguel2026|w:thumb/a/a2/TNT_Sports_logo.svg/500px-TNT_Sports_logo.svg.png",
+            "ESPNPremium.ar|ESPN Premium HD|Deportes|http://181.209.37.74:8001/play/a086/index.m3u8?token=miguel2026",
+            "ESPN.lat|ESPN HD|Deportes|http://181.209.37.74:8001/play/a099/index.m3u8?token=miguel2026|w:thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
+            "ESPN2.lat|ESPN 2 HD|Deportes|http://181.209.37.74:8001/play/a098/index.m3u8?token=miguel2026|w:thumb/a/a2/ESPN2_logo.svg/500px-ESPN2_logo.svg.png",
+            "ESPN3.lat|ESPN 3 HD|Deportes|http://181.209.37.74:8001/play/a09a/index.m3u8?token=miguel2026|w:thumb/2/22/ESPN3_logo.svg/500px-ESPN3_logo.svg.png",
+            "ESPN4.lat|ESPN 4 HD|Deportes|http://181.209.37.74:8001/play/a084/index.m3u8?token=miguel2026",
+            "FoxSports.lat|Fox Sports HD|Deportes|http://181.209.37.74:8001/play/a085/index.m3u8?token=miguel2026|w:thumb/8/88/Fox_Sports_logo_2012.svg/500px-Fox_Sports_logo_2012.svg.png",
+            "FoxSports2.lat|Fox Sports 2 HD|Deportes|http://181.209.37.74:8001/play/a09b/index.m3u8?token=miguel2026|w:thumb/7/78/Fox_Sports_2_logo_2012.svg/500px-Fox_Sports_2_logo_2012.svg.png",
+            "FoxSports3.lat|Fox Sports 3 HD|Deportes|http://181.209.37.74:8001/play/a06y/index.m3u8?token=miguel2026|w:thumb/3/30/Fox_Sports_3_logo_2012.svg/500px-Fox_Sports_3_logo_2012.svg.png",
+            "DSports.lat|DSPORTS 1 HD|Deportes|http://181.209.37.74:8001/play/a0ef/index.m3u8?token=miguel2026",
+            "DSports2.lat|DSPORTS 2 HD|Deportes|http://181.209.37.74:8001/play/a0ee/index.m3u8?token=miguel2026",
+            "DeporTV.ar|DeporTV|Deportes|http://181.209.37.74:8001/play/a07f/index.m3u8?token=miguel2026|w:thumb/0/04/DeporTV_logo_2020.svg/500px-DeporTV_logo_2020.svg.png",
+            "AMSports.ar|AM Sports|Deportes|http://181.209.37.74:8001/play/a061/index.m3u8?token=miguel2026",
+            "TigoSports.py|Tigo Sports|Deportes|Tigo_Sports/tracks-v1a1/mono.m3u8",
+            "DAZN1.es|DAZN 1 HD|Deportes|DAZN_1_HD/index.m3u8",
+            "Eurosport1.fr|Eurosport 1 HD|Deportes|Eurosport_1_HD/index.m3u8",
+            "Eurosport2.fr|Eurosport 2 HD|Deportes|Eurosport_2_HD/index.m3u8",
+            "TraceSportStars.fr|Trace Sport Stars|Deportes|Trace_Sport_Stars/index.m3u8",
+            "CanalShowsport.ar|Canal Showsport|Deportes|https://livestream.lumpentv.com.ar/hls/lumpen.m3u8|i:0L9tW3Z.png",
+            "FIFAPlus.uk|FIFA+|Deportes|https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8|w:thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
+
+            // === CINE Y SERIES ===
+            "HBO.us|HBO HD|Cine y Series|HBO_HD/index.m3u8",
+            "HBO2.lat|HBO 2|Cine y Series|http://181.209.37.74:8001/play/a07o/index.m3u8?token=miguel2026",
+            "HBOFamily.lat|HBO Family|Cine y Series|http://181.209.37.74:8001/play/a07p/index.m3u8?token=miguel2026",
+            "HBOXtreme.lat|HBO Xtreme|Cine y Series|http://181.209.37.74:8001/play/a06g/index.m3u8?token=miguel2026",
+            "Cinemax.us|Cinemax|Cine y Series|http://181.209.37.74:8001/play/a08r/index.m3u8?token=miguel2026",
+            "StarChannel.lat|Star Channel HD|Cine y Series|http://181.209.37.74:8001/play/a087/index.m3u8?token=miguel2026|w:thumb/8/87/Star_Channel_2021.svg/500px-Star_Channel_2021.svg.png",
+            "TNT.lat|TNT HD|Cine y Series|http://181.209.37.74:8001/play/a08b/index.m3u8?token=miguel2026",
+            "TNTSeries.lat|TNT Series HD|Cine y Series|http://181.209.37.74:8001/play/a08c/index.m3u8?token=miguel2026",
+            "TNTNovelas.us|TNT Novelas HD|Cine y Series|http://181.209.37.74:8001/play/a08e/index.m3u8?token=miguel2026|w:thumb/6/67/TNT_Novelas_2025.svg/1920px-TNT_Novelas_2025.svg.png",
+            "Space.lat|Space HD|Cine y Series|http://181.209.37.74:8001/play/a071/index.m3u8?token=miguel2026",
+            "FX.lat|FX HD|Cine y Series|http://181.209.37.74:8001/play/a070/index.m3u8?token=miguel2026|w:thumb/4/4d/FX_International_logo.svg/960px-FX_International_logo.svg.png",
+            "Cinecanal.us|Cinecanal HD|Cine y Series|http://181.209.37.74:8001/play/a089/index.m3u8?token=miguel2026|w:thumb/e/e6/CinecanalLA.png/960px-CinecanalLA.png",
+            "AMC.lat|AMC|Cine y Series|http://181.209.37.74:8001/play/a064/index.m3u8?token=miguel2026",
+            "WarnerChannel.lat|Warner Channel HD|Cine y Series|http://181.209.37.74:8001/play/a09d/index.m3u8?token=miguel2026",
+            "SonyChannel.lat|Sony HD|Cine y Series|http://181.209.37.74:8001/play/a09c/index.m3u8?token=miguel2026|w:thumb/b/b9/Sony_Channel_Logo.png/960px-Sony_Channel_Logo.png",
+            "SonyMovies.lat|Sony Movies HD|Cine y Series|http://181.209.37.74:8001/play/a09j/index.m3u8?token=miguel2026",
+            "AXN.lat|AXN HD|Cine y Series|http://181.209.37.74:8001/play/a09e/index.m3u8?token=miguel2026|w:thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
+            "StudioUniversal.lat|Studio Universal|Cine y Series|http://181.209.37.74:8001/play/a067/index.m3u8?token=miguel2026",
+            "UniversalTV.lat|Universal HD|Cine y Series|http://181.209.37.74:8001/play/a09i/index.m3u8?token=miguel2026|w:thumb/b/b2/Universal_TV_logo.svg/500px-Universal_TV_logo.svg.png",
+            "ParamountNetwork.lat|Paramount HD|Cine y Series|http://181.209.37.74:8001/play/a073/index.m3u8?token=miguel2026|https://logodownload.org/wp-content/uploads/2014/07/paramount-logo-0-1536x1536.png",
+            "USANetwork.lat|USA Network|Cine y Series|http://181.209.37.74:8001/play/a068/index.m3u8?token=miguel2026",
+            "CineAR.ar|Cine.AR|Cine y Series|http://181.209.37.74:8001/play/a069/index.m3u8?token=miguel2026|w:thumb/0/07/Cine.ar_logo.svg/500px-Cine.ar_logo.svg.png",
+            "Volver.ar|Volver|Cine y Series|http://181.209.37.74:8001/play/a066/index.m3u8?token=miguel2026|w:thumb/8/87/Canal_Volver_logo.png/500px-Canal_Volver_logo.png",
+            "TCM.lat|TCM|Cine y Series|http://181.209.37.74:8001/play/a065/index.m3u8?token=miguel2026",
+            "Lifetime.lat|Lifetime|Cine y Series|http://181.209.37.74:8001/play/a07l/index.m3u8?token=miguel2026",
+            "TLNovelas.lat|TLNovelas|Cine y Series|http://181.209.37.74:8001/play/a07y/index.m3u8?token=miguel2026|w:thumb/8/8b/TLNovelas_logo_2019.png/500px-TLNovelas_logo_2019.png",
+            "Pasiones.lat|Pasiones HD|Cine y Series|Pasiones_HD/index.m3u8",
+            "EuropaEuropa.lat|Europa Europa|Cine y Series|http://181.209.37.74:8001/play/a07t/index.m3u8?token=miguel2026",
+            "FilmAndArts.lat|Film & Arts HD|Cine y Series|http://181.209.37.74:8001/play/a075/index.m3u8?token=miguel2026",
+            "XtremaCineClasico.ar|Xtrema Cine Clásico|Cine y Series|https://stmv6.voxtvhd.com.br/cineclasico/cineclasico/playlist.m3u8|i:j91M4Yf.png",
+            "XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineterror/cineterror/playlist.m3u8|i:FcaTUym.png",
+
+            // === INFANTILES ===
+            "CartoonNetwork.lat|Cartoon Network HD|Infantiles|http://181.209.37.74:8001/play/a083/index.m3u8?token=miguel2026|w:thumb/8/80/Cartoon_Network_2010_logo.svg/500px-Cartoon_Network_2010_logo.svg.png",
+            "Nickelodeon.lat|Nickelodeon|Infantiles|http://181.209.37.74:8001/play/a08y/index.m3u8?token=miguel2026|w:thumb/7/7a/Nickelodeon_2023_logo.svg/500px-Nickelodeon_2023_logo.svg.png",
+            "NickJr.lat|Nick Jr|Infantiles|http://181.209.37.74:8001/play/a07s/index.m3u8?token=miguel2026",
+            "DisneyChannel.lat|Disney Channel HD|Infantiles|http://181.209.37.74:8001/play/a06w/index.m3u8?token=miguel2026|w:f/ff/2024_Disney_Channel_text_logo.svg",
+            "DisneyJunior.lat|Disney Junior|Infantiles|http://181.209.37.74:8001/play/a08x/index.m3u8?token=miguel2026|w:e/e3/2024_Disney_Jr._Logo.svg",
+            "DiscoveryKids.lat|Discovery Kids|Infantiles|http://181.209.37.74:8001/play/a07r/index.m3u8?token=miguel2026|w:thumb/d/dc/2016_Discovery_Kids_logo.svg/1164px-2016_Discovery_Kids_logo.svg.png",
+            "Pakapaka.ar|Pakapaka|Infantiles|http://181.209.37.74:8001/play/a05t/index.m3u8?token=miguel2026|w:thumb/0/01/Pakapaka_logo_2020.svg/500px-Pakapaka_logo_2020.svg.png",
+            "Cartoonito.lat|Cartoonito|Infantiles|Cartoonito/index.m3u8|https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Cartoonito_logo.svg/1280px-Cartoonito_logo.svg.png",
+            "Tooncast.lat|Tooncast|Infantiles|Tooncast/index.m3u8",
+            "XtremaCartoons.ar|Xtrema Cartoons|Infantiles|https://stmv6.voxtvhd.com.br/xtremacartoons/xtremacartoons/playlist.m3u8|i:X2d8y4e.png",
+
+            // === DOCUMENTALES ===
+            "History.lat|History Channel|Documentales|http://181.209.37.74:8001/play/a090/index.m3u8?token=miguel2026",
+            "History2.lat|History 2|Documentales|http://181.209.37.74:8001/play/a06n/index.m3u8?token=miguel2026",
+            "TheHistoryChannel.lat|The History Channel HD|Documentales|http://181.209.37.74:8001/play/a09g/index.m3u8?token=miguel2026",
+            "NationalGeographic.lat|Nat Geo HD|Documentales|http://181.209.37.74:8001/play/a09f/index.m3u8?token=miguel2026|w:thumb/6/6a/National_Geographic_logo.svg/500px-National_Geographic_logo.svg.png",
+            "NatGeoWild.lat|Nat Geo Wild HD|Documentales|Nat_Geo_Wild_HD/index.m3u8",
+            "DiscoveryChannel.lat|Discovery Channel HD|Documentales|http://181.209.37.74:8001/play/a08g/index.m3u8?token=miguel2026|w:thumb/f/f1/Discovery_Inc._logo.svg/500px-Discovery_Inc._logo.svg.png",
+            "DiscoveryWorld.lat|DISCOVERY WORLD|Documentales|http://181.209.37.74:8001/play/a0eb/index.m3u8?token=miguel2026",
+            "DiscoveryScience.lat|DISCOVERY SCIENCIA|Documentales|http://181.209.37.74:8001/play/a0e9/index.m3u8?token=miguel2026",
+            "InvestigationDiscovery.lat|ID Investigation|Documentales|Discovery_Investigation_HD/index.m3u8",
+            "DiscoveryTurbo.lat|Discovery Turbo|Documentales|Discovery_Turbo_HD/index.m3u8",
+
+            // === ENTRETENIMIENTO ===
+            "AE.lat|A&E HD|Entretenimiento|http://181.209.37.74:8001/play/a09h/index.m3u8?token=miguel2026|w:thumb/7/77/A%2BE_Network_logo.svg/500px-A%2BE_Network_logo.svg.png",
+            "AdultSwimLatinAmerica.us|Adult Swim|Entretenimiento|http://181.209.37.74:8001/play/a08d/index.m3u8?token=miguel2026|w:thumb/e/e4/Adult_Swim_2003_logo.svg/960px-Adult_Swim_2003_logo.svg.png",
+            "ComedyCentral.lat|Comedy Central HD|Entretenimiento|http://181.209.37.74:8001/play/a072/index.m3u8?token=miguel2026|w:thumb/3/33/Comedy_Central_2018.svg/500px-Comedy_Central_2018.svg.png",
+            "DiscoveryHH.lat|Discovery H&H HD|Entretenimiento|http://181.209.37.74:8001/play/a08f/index.m3u8?token=miguel2026",
+            "ELatinAmerica.us|E! Entertainment|Entretenimiento|http://181.209.37.74:8001/play/a08z/index.m3u8?token=miguel2026|w:thumb/9/96/E%21_Logo_2012.svg/500px-E%21_Logo_2012.svg.png",
+            "ElGourmet.lat|El Gourmet|Entretenimiento|http://181.209.37.74:8001/play/a07u/index.m3u8?token=miguel2026",
+            "HGTV.lat|HGTV|Entretenimiento|http://181.209.37.74:8001/play/a0e8/index.m3u8?token=miguel2026",
+            "LasEstrellas.mx|El Canal de las Estrellas|Entretenimiento|http://181.209.37.74:8001/play/a07x/index.m3u8?token=miguel2026|w:thumb/2/23/Las_Estrellas_logo.svg/500px-Las_Estrellas_logo.svg.png",
+            "TelemundoInternacional.us|Telemundo Internacional|Entretenimiento|http://138.121.15.230:9002/TELEMUNDO/index.m3u8|i:j2O4ndp.png",
+            "TVEInternacional.es|TVE|Entretenimiento|http://181.209.37.74:8001/play/a080/index.m3u8?token=miguel2026|w:thumb/2/22/TVE_Internacional_logo.svg/500px-TVE_Internacional_logo.svg.png",
+            "CiudadMagazine.ar|ciudad magazine|Entretenimiento|http://181.209.37.74:8001/play/a06m/index.m3u8?token=miguel2026|w:thumb/a/a2/Ciudad_Magazine_logo.svg/500px-Ciudad_Magazine_logo.svg.png",
+            "MetroTV.ar|Metro TV|Entretenimiento|http://181.209.37.74:8001/play/a06l/index.m3u8?token=miguel2026|i:7f7M7zl.png",
+            "CarasTV.ar|Caras TV|Entretenimiento|https://unlimited1-us.dps.live/carastv/carastv.smil/playlist.m3u8|i:7dl4yQY.jpeg",
+
+            // === MÚSICA ===
+            "MTV.lat|MTV|Música|http://181.209.37.74:8001/play/a06r/index.m3u8?token=miguel2026|w:thumb/a/a2/MTV_2021_symbol.svg/500px-MTV_2021_symbol.svg.png",
+            "MTV00s.uk|MTV 00s|Música|http://181.209.37.74:8001/play/a092/index.m3u8?token=miguel2026",
+            "HTV.lat|HTV|Música|http://181.209.37.74:8001/play/a06t/index.m3u8?token=miguel2026",
+            "CM.ar|CM|Música|http://181.209.37.74:8001/play/a0e6/index.m3u8?token=miguel2026",
+            "QuieroMusicaenmiIdioma.ar|Quiero Música|Música|http://181.209.37.74:8001/play/a06s/index.m3u8?token=miguel2026|i:RO9Dz3X.png",
+            "La100.ar|La 100|Música|https://mdstrm.com/live-stream-playlist/68b74fd1d6512526f1f7c75a.m3u8|https://cloudfront-us-east-1.images.arcpublishing.com/radiomitre/CZJMM4BJVRFANO4VGMMYWSTEVE.png",
+            "CumbiaMix.ar|Cumbia Mix|Música|https://cloud.tvomix.com/CUMBIAMIX/index.m3u8|https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6901dfd41a05195b77301d7b/b306e57e4_Logo-TV-C.png",
+            "UrbanMix.ar|Urban Mix|Música|https://cloud.tvomix.com/URBANMIX/index.m3u8|https://tvomix.com/Logos/Urbanmix.png",
+            "KpopMix.ar|Kpop Mix|Música|https://cloud.tvomix.com/KPOPMIX/index.m3u8|https://tvomix.com/Logos/Kpopmix.png",
+            "ChamameTV.ar|Chamamé TV|Música|https://srv4.zcast.com.br/chamametv/chamametv/playlist.m3u8|i:JigzJck.png",
+            "FolcloreandoTV.ar|Folcloreando TV|Música|https://stmvideo6.livecastv.com/radioactivasanjuan/radioactivasanjuan/playlist.m3u8|https://folcloreando.com/wp-content/uploads/elementor/thumbs/logo-qvcz16ulfxe7qqvftihvlcoku8l2hux59qcndiy3qo.png",
+            "AzaharesRadiovisualMultimedia.ar|Azahares Radio Multimedia|Música|https://streamyes.alsolnet.com/azaharesfm/live/playlist.m3u8|i:g1BFoSs.png",
+            "BeatsRadio.ar|Beats Radio|Música|https://videostream.shockmedia.com.ar:19360/beatsradio/beatsradio.m3u8|i:zkNUO5p.png",
+            "MasFM.ar|Más FM 95.9|Música|https://vivo.solumedia.com:19360/masfm/masfm.m3u8|i:TJ4gWQM.png",
+            "PowerMaxRadioTV.ar|Power Max Radio TV|Música|https://videostream.shockmedia.com.ar:19360/radio1045/radio1045.m3u8|b:qgZLYDj/channels4-profile-6.jpg",
+            "RadioConexionWebTV.ar|Radio Conexión Web TV|Música|https://tuvideoonline.com.ar:3391/live/radioconexionlive.m3u8|i:pXS38zo.png",
+            "RadioRealpolitik.ar|Radio Realpolitik|Música|https://vivo.solumedia.com:19360/realpolitik/realpolitik.m3u8|i:L9KCdTX.png",
+            "RadioUP.ar|Radio UP|Música|https://iptv.ixfo.com.ar:30443/live/RadioUpTvStreaming/playlist.m3u8|https://radioup.com.ar/wp-content/uploads/2025/06/logo-radioup-footer.png",
+            "RadioYguazuTV.ar|Radio Yguazú TV|Música|https://live.enhdtv.com:8081/radioiguazutv/index.m3u8|i:kVi0ICm.png",
+            "Radiocanal.ar|Radiocanal San Francisco|Música|http://204.199.3.2/.m3u8|b:NNyDWsz/download-8.png",
+
+            // === REGIONALES (CANALES DEL INTERIOR, PROVINCIALES Y SEÑALES LOCALES) ===
+            "TelefeInterior.ar|Telefe Interior|Regionales|http://200.91.32.158:8080/telefehdvalle/index.m3u8|w:thumb/c/cc/Telefe_%28nuevo_logo%29.png/960px-Telefe_%28nuevo_logo%29.png",
+            "QuanticaTV.ar|Quantica TV|Regionales|https://videostream.shockmedia.com.ar:19360/quanticatv/quanticatv.m3u8|i:6f8EYC2.jpeg",
+            "LAMIL35TV.ar|LAMIL35 TV|Regionales|https://vd01.streaminghd.net.ar:3349/live/bzuctkgnlive.m3u8|https://www.appcreator24.com/srv/imgs/gen/3544498_ico.png",
+            "CanalTDC.ar|Canal TDC|Regionales|https://tdcserver.com:19360/tdconlione-2/tdconlione-2.m3u8|i:nPG38B2.png",
+            "MercurioNoticias.ar|Mercurio Noticias|Regionales|https://videostream.shockmedia.com.ar/hls/mercuriotv/mercuriotv.m3u8|i:sfd87LX.png",
+            "CosmosTv.ar|Cosmos TV|Regionales|https://tv.mediacp.eu:19360/cosmos/cosmos.m3u8|https://i0.wp.com/fmcosmos.com/wp-content/uploads/2021/11/COSMOS-TV.png",
+            "Canal9Link.ar|Canal 9 Link|Regionales|https://617c5175c970b.streamlock.net:4444/9linklivert/smil:9linkmultibr.smil/playlist.m3u8|https://audios.radiosnet.com.ar/imgwikidat/img_cuerpo/canal+9+buenos+aires9.jpg",
+            "CanalPulpoTV.ar|Canal Pulpo TV|Regionales|https://vs20.live.opencaster.com/canalpulpotv_bdeee6e2/index.m3u8|https://new.opencaster.com/uploads/logos/logo_306_1756336707.png",
+            "CiudadMagica.ar|Ciudad Mágica|Regionales|https://lbgo.bozztv.com/ssh101/ssh101/verycoolfgr/playlist.m3u8|i:HJkSz2U.png",
+            "Aunar.ar|AUNAR|Regionales|http://181.209.37.74:8001/play/a0e0/index.m3u8?token=miguel2026",
+            "CanalLocal.ar|CANAL LOCAL|Regionales|http://181.209.37.74:8001/play/a0e1/index.m3u8?token=miguel2026",
+            "Multivision.ar|MULTIVISION|Regionales|http://181.209.37.74:8001/play/a0e3/index.m3u8?token=miguel2026",
+            "RuralTV.ar|Rural|Regionales|http://181.209.37.74:8001/play/a06k/index.m3u8?token=miguel2026",
+            "TelePosadas.ar|Tele Posadas|Regionales|https://live20.bozztv.com/giatv/giatv-teleposadaso01/teleposadaso01/playlist.m3u8|i:88MVgwX.png",
+            "5tv.ar|5TV Corrientes|Regionales|http://www.coninfo.net:1935/tvcinco/live1/playlist.m3u8|i:mSn7ACs.png",
+            "ABTVBariloche.ar|ABTV Bariloche|Regionales|https://videostream.shockmedia.com.ar/hls/abtvbariloche/abtvbariloche.m3u8|i:l4TSfDr.png",
+            "AiredeSantaFe.ar|Aire de Santa Fe|Regionales|https://unlimited1-us.dps.live/airedesantafetv/airedesantafetv.smil/playlist.m3u8|i:60vSWW0.png",
+            "BVC.ar|BVC|Regionales|https://vivo.solumedia.com:19360/bvnet/bvnet.m3u8|i:I06TSx0.png",
+            "CableImagenArmstrong.ar|Cable Imagen Armstrong|Regionales|https://stream.arcast.com.ar/casse/casse/playlist.m3u8|i:U9NuJQC.png",
+            "Cadena103TV.ar|Cadena 103|Regionales|http://arcast.net:1935/cadena103/cadena103/playlist.m3u8|i:vBsry35.png",
+            "Canal2deUshuaia.ar|Canal 2 de Ushuaia|Regionales|https://nd106.republicaservers.com:4433/hls/c6611/index.m3u8|b:q5NPdK2/canal2-logo.png",
+            "Canal2Gualeguay.ar|Canal 2 Gualeguay|Regionales|https://stream.arcast.net:4443/gualeguay/gualeguay/playlist.m3u8|i:TOlncyp.png",
+            "Canal2Misiones.ar|Canal 2 Misiones|Regionales|https://nd106.republicaservers.com:4433/hls/canal2misioness/index.m3u8|i:YqTNXDf.png",
+            "Canal2NexTVRafaela.ar|Canal 2 NexTV Rafaela|Regionales|https://edge.enhdtv.com/nexthd/index.m3u8|i:hgj3CaR.jpeg",
+            "Canal3Formosa.ar|Canal 3 Formosa|Regionales|https://stmvideo6.livecastv.com/agenfor/agenfor/playlist.m3u8|i:rVDrNIy.png",
+            "Canal3LaPampa.ar|Canal 3 La Pampa|Regionales|https://stream.arcast.com.ar/c3lapampa/ngrp:c3lapampa_all/playlist.m3u8|i:SsNFudZ.png",
+            "Canal3Pinamar.ar|Canal 3 Pinamar|Regionales|http://intelincloud01.com.ar/hls/cn3/index.m3u8|i:IABFaH1.png",
+            "Canal3Tacural.ar|Canal 3 Tacural|Regionales|http://vivo.canal3tacural.com.ar:8081/hls/stream.m3u8|i:RKvSa52.jpeg",
+            "Canal4Esquel.ar|Canal 4 Esquel|Regionales|https://stream.arcast.com.ar/canal4esquel/canal4esquel/playlist.m3u8|i:6kbOr16.png",
+            "Canal4Jujuy.ar|Canal 4 Jujuy|Regionales|https://5cd577a3dd8ec.streamlock.net/CANAL4/smil:CANAL4.smil/playlist.m3u8|i:qB6I274.png",
+            "Canal4Posadas.ar|Canal 4 Posadas|Regionales|https://iptv.ixfo.com.ar:30443/live/C4POS/playlist.m3u8|i:tElJr3e.png",
+            "Canal4SanJuan.ar|Canal 4 San Juan|Regionales|https://streamlov.alsolnet.com/canal4sanjuan/live/playlist.m3u8|i:MsCnwRA.png",
+            "Canal4Teleaire.ar|Canal 4 Teleaire|Regionales|https://stmvideo6.livecastv.com/canal4/canal4/playlist.m3u8|i:XyiNvbY.png",
+            "Canal4VillaDolores.ar|Canal 4 Villa Dolores|Regionales|https://stmvideo3.livecastv.com/canal4vd/canal4vd/playlist.m3u8|i:ZKSnGfw.png",
+            "Canal5DelPueblo.ar|Canal 5 Del Pueblo|Regionales|https://stmv4.voxtvhd.com.br/canal5pueblo/canal5pueblo/playlist.m3u8|b:XzcYYMc/Canal-5-alcorta-ver.jpg",
+            "Canal5SantaFe.ar|Canal 5 Santa Fe|Regionales|https://stream.arcast.com.ar/c5sf/c5sf/playlist.m3u8|i:WX0esjQ.png",
+            "Canal5TVChepes.ar|Canal 5 TV Chepes|Regionales|https://videostream.shockmedia.com.ar:19360/canal5alfatvchepes/canal5alfatvchepes.m3u8|i:AzEqroq.png",
+            "Canal6Posadas.ar|Canal 6 Posadas|Regionales|https://iptv.ixfo.com.ar:30443/live/c6digital/playlist.m3u8|i:OamBiS5.png",
+            "Canal7Jujuy.ar|Canal 7 Jujuy|Regionales|https://stream.arcast.live/canal7jujuy/ngrp:canal7jujuy_all/playlist.m3u8|i:K0jk8p4.png",
+            "Canal7Neuquen.ar|Canal 7 Neuquén|Regionales|https://stream.arcast.com.ar/c7nq/ngrp:c7nq_all/playlist.m3u8|b:BrvQsWm/C7neuquenlogo2023.png",
+            "Canal7Salta.ar|Canal 7 Salta|Regionales|https://vivo.solumedia.com:19360/cooperativa/cooperativa.m3u8|i:CudG6sl.png",
+            "Canal7TV.ar|Canal 7 Santiago del Estero|Regionales|https://stream.arcast.com.ar/envivo/castv/playlist.m3u8|i:iJMH0UK.png",
+            "Canal9Litoral.ar|Canal 9 Litoral|Regionales|https://stream.arcast.live/ahora/ahora/playlist.m3u8|w:a/ad/Canal_9_Litoral_2021.png",
+            "Canal9Resistencia.ar|Canal 9 Resistencia|Regionales|http://coninfo.net:1935/9linklivert/smil:9linkmultibr.smil/playlist.m3u8|i:xqgRFpC.png",
+            "Canal13LaRioja.ar|Canal 13 La Rioja|Regionales|http://arcast.net:1935/mp/mp/playlist.m3u8|i:OI97Sgq.png",
+            "Canal13SanLuis.ar|Canal 13 San Luis|Regionales|https://stream.radiosmundiales.com:19360/sanluismas/sanluismas.m3u8|i:NcfMC29.png",
+            "Canal21TV.ar|Canal 21 TV|Regionales|https://iptv.ixfo.com.ar:30443/c21tv/hd/c21tv/playlist.m3u8|i:Am7yMXg.png",
+            "Canal22.ar|Canal 22|Regionales|https://5f700d5b2c46f.streamlock.net/canal22/canal22/playlist.m3u8|i:R4wXVxf.png",
+            "Canal50Morteros.ar|Canal 50 Morteros|Regionales|https://online.coopmorteros.coop/canal50/vivo.m3u8|i:IDhgBav.png",
+            "Canal79LaCosta.ar|Canal 79 La Costa|Regionales|https://streamconex.com:19360/lacosta/lacosta.m3u8|i:HYuSqJy.png",
+            "Canal79MardelPlata.ar|Canal 79 Mar del Plata|Regionales|https://streamconex.com:19360/mardelplata/mardelplata.m3u8|i:I93ypGY.png",
+            "Canal79Puan.ar|Canal 79 Puan|Regionales|https://streamconex.com:19360/puan/puan.m3u8|i:HYuSqJy.png",
+            "Canal79SantaClaradelMar.ar|Canal 79 Santa Clara del Mar|Regionales|https://streamconex.com:19360/santaclara-1/santaclara-1.m3u8|i:I93ypGY.png",
+            "Canal99Miramar.ar|Canal 99 Miramar|Regionales|https://vivo.solumedia.com:19360/cardinal/cardinal.m3u8|i:PblsZxz.jpeg",
+            "CanalProvincial.ar|Canal Provincial|Regionales|https://streaming.telered.com.ar/provincial/streaming/mystream.m3u8|i:bXHHtcb.png",
+            "CatamarcaTV.ar|Catamarca TV|Regionales|https://stream.arcast.com.ar/canal7catamarca/ngrp:canal7catamarca_all/playlist.m3u8?DVR=|i:CEuPoqG.png",
+            "CeltaTV.ar|Celta TV|Regionales|https://vivo.solumedia.com:19360/celta/celta.m3u8|i:rwoIF4w.png",
+            "ChacoTV.ar|Chaco TV|Regionales|https://wowzasrv.chaco.gov.ar/Streamtv/chacotv/playlist.m3u8|i:b6RerDw.png",
+            "ChacraTV.ar|Chacra TV|Regionales|https://5f700d5b2c46f.streamlock.net/chacratv/chacratv/playlist.m3u8|i:gy7AEfO.png",
+            "CorreaRadiovision.ar|Correa Radiovisión|Regionales|https://stream.arcast.net:4443/correadigital/canal12/playlist.m3u8|i:bNCGzjf.jpeg",
+            "CorrientesTV.ar|Corrientes TV|Regionales|https://617c5175c970b.streamlock.net:4444/13max2/live13maxtv2026/playlist.m3u8|i:7PBkvRp.png",
+            "EcoTV.ar|Eco TV|Regionales|https://stream.arcast.com.ar/ecotv/ngrp:ecotv_all/playlist.m3u8|i:V2ldYVd.jpg",
+            "ItelTVCanal2.ar|Itel TV Canal 2|Regionales|https://proxystream.iteltv.com.ar/output/iteltv/playlist.m3u8|i:OxmpRDx.png",
+            "MisionesCuatro.ar|Misiones Cuatro|Regionales|https://iptv.ixfo.com.ar:30443/live-HD/MISIONES4/playlist.m3u8|i:HXRpRlK.png",
+            "NeoTV.ar|Neo TV|Regionales|https://videostream.shockmedia.com.ar:19360/neotvdigital/neotvdigital.m3u8|i:Xtu85tb.png",
+            "NGFederal.ar|NG Federal|Regionales|http://www.coninfo.net:1935/tvlink/live/playlist.m3u8|i:lJCIqYn.png",
+            "PowerHD.ar|Power HD|Regionales|https://live2.tensila.com/1-1-1.power-tv/hls/master.m3u8|i:15gMDG0.png",
+            "RadioTVNeuquen.ar|Radio TV Neuquén|Regionales|https://media.neuquen.gov.ar/rtn/television/playlist.m3u8|i:HXBLozl.png",
+            "RTN.ar|RTN Neuquén|Regionales|https://media.neuquen.gov.ar/rtn/television/media.m3u8|i:8xqYg4C.png",
+            "SanLuisPlus.ar|San Luis +|Regionales|https://stream.radiosmundiales.com/hls/sanluismas/sanluismas.m3u8|i:bGoGiry.png",
+            "SanPedroTV.ar|San Pedro TV|Regionales|https://iptv.ixfo.com.ar:30443/live/sanpedrotv/playlist.m3u8|i:UkpXogr.png",
+            "SenillosaTV.ar|Senillosa TV|Regionales|https://player.videohost.click/senillosatv/senillosatv/playlist.m3u8|https://yt3.ggpht.com/ytc/AKedOLTrvk7gv0uCQ8QdGREqv6Rtzm4F6UMetdxKub6D=s400-c-k-c0x00ffffff-no-rj",
+            "SicardiTV.ar|Sicardi TV|Regionales|https://vivo.solumedia.com:19360/sicarditv/sicarditv.m3u8|i:W2EUIL2.png",
+            "T5Satelital.ar|T5 Satelital|Regionales|https://stream.t5satelital.blog/hls/t5satelitalweb.m3u8|i:ZcD0rUP.png",
+            "Telecinco.ar|TeleCinco Trelew|Regionales|https://videohd.live:19360/8016/8016.m3u8|i:ZDenyAE.png",
+            "Telemax.ar|Telemax|Regionales|https://stream-gtlc.telecentro.net.ar/hls/telemaxhls/main.m3u8|w:thumb/1/13/Telemax_Argentina_%282018%29.png/960px-Telemax_Argentina_%282018%29.png",
+            "TIVTelevision.ar|TIV Televisión|Regionales|https://videohd.live:19360/8008/8008.m3u8|i:gsgXGEj.png",
+            "TVCanal72.ar|TV Canal 72|Regionales|https://stmv1.voxtvhd.com.br/canal72tv2/canal72tv2/playlist.m3u8|https://tvcanal72.com.ar/wp-content/uploads/2022/08/LOGO-CANAL-72-1-1024x256.png",
+            "TVPublicaFueguina.ar|TV Pública Fueguina|Regionales|https://nd106.republicaservers.com/hls/c8094/index.m3u8|i:4dUvFqa.png",
+            "TVSolidaria.ar|TV Solidaria|Regionales|https://canadaremar2.todostreaming.es/live/argentina-web.m3u8|i:M0fMypR.png",
+            "Uniteve.ar|Uniteve|Regionales|https://vivo.solumedia.com:19360/uniteve/uniteve.m3u8|https://pbs.twimg.com/profile_images/720276300888453120/a_SDOmBc_400x400.jpg",
+            "VillaManteroTV.ar|Villa Mantero TV|Regionales|https://micanal.ovh/livestreams/515.AUTOOAAZ721F.m3u8|i:mmEenTm.png",
+
+            // === EDUCACIÓN ===
+            "Encuentro.ar|ENCUENTRO HD|Educación|http://181.209.37.74:8001/play/a0ds/index.m3u8?token=miguel2026|w:thumb/3/30/Canal_Encuentro_logo_2020.svg/500px-Canal_Encuentro_logo_2020.svg.png",
+            "CanalA.ar|Canal a|Educación|http://181.209.37.74:8001/play/a06d/index.m3u8?token=miguel2026",
+            "CanalUniversidad.ar|Canal Universidad|Educación|https://videostream.shockmedia.com.ar/hls/canaluniversidadmdp/canaluniversidadmdp.m3u8|i:trmPKYw.png",
+            "TVUniversidad.ar|TV Universidad|Educación|https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8|i:0MXsQ25.png",
+
+            // === RELIGIOSOS ===
+            "UnifeTV.ar|Unife TV|Religiosos|https://cdn.mycloudstream.io/hls/live/broadcast/xundwjvp/index.m3u8|i:TLM592m.png",
+            "CanalOrbe21.ar|Canal Orbe 21|Religiosos|https://stream.arcast.net:4443/canal21/ngrp:canal21_all/playlist.m3u8|i:USD6Wn8.png",
+            "CanalSantaMaria.ar|Canal Santa María|Religiosos|https://streaming.telered.com.ar/santa-maria/streaming/mystream.m3u8|https://www.canalsantamaria.com.ar/images/santamaria_logo.jpg",
+            "Canal13Jujuy.ar|Canal 13 Jujuy TV|Religiosos|https://genexservicios.com:19360/canal13jujuy/canal13jujuy.m3u8|i:lmKLiJ3.jpg",
+            "Canal6VientoRecio.ar|Canal 6 Viento Recio|Religiosos|https://stmvideo6.livecastv.com/vientorecio/vientorecio/playlist.m3u8|i:liyTNzK.png",
+            "RadioSublimeGraciaTV.ar|Radio Sublime Gracia TV|Religiosos|https://5f700d5b2c46f.streamlock.net/sublime/sublime/playlist.m3u8|b:P9jgTz4/c49b986afb751882bcbee57f9c9b20d7-350x210.png",
+            "TVManaArgentina.ar|TV Maná Argentina|Religiosos|https://w2.manasat.com/tvmana-ar/smil:tvmana-ar.smil/playlist.m3u8|i:jars0mP.png"
+        ];
+
+        const channels = rawChannels.map((l, i) => {
             const [id, name, group, path, logo] = l.split("|");
             const raw = /^https?:/.test(path) ? path : STREAM_BASE + path;
             return { i, id, name, group, logo: logoUrl(logo), alt: null, repo: null, proxiedUrl: buildProxyUrl(raw) };
@@ -1167,7 +1251,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
         wrap.addEventListener('mousemove', showUi);
         wrap.addEventListener('mouseleave', () => { if (!video.paused) wrap.classList.remove('ui'); });
         
-        // MODIFICACIÓN SOLICITADA: Clic en la pantalla solo muestra/oculta la UI, NUNCA hace pausa.
         wrap.addEventListener('click', e => {
             if (e.target.closest('button, input')) return;
             showUi();
@@ -1241,7 +1324,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             if (e.target.tagName === 'INPUT') return;
             const k = e.key.toLowerCase();
             
-            // Cambio de canal (Flechas arriba/abajo o botones de canal del control físico)
             if (e.key === 'ArrowUp' || e.key === 'ChannelUp') {
                 e.preventDefault();
                 stepChannel(-1);
@@ -1250,22 +1332,18 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
                 e.preventDefault();
                 stepChannel(1);
             }
-            // Reproducir / Pausa por atajo o tecla multimedia dedicada
             else if (k === 'k' || e.key === 'MediaPlayPause') {
                 e.preventDefault();
                 togglePlay();
             }
-            // Silencio
             else if (k === 'm' || e.key === 'AudioVolumeMute') {
                 btnMute.click();
             }
-            // Subir volumen con control remoto
             else if (e.key === 'AudioVolumeUp' || e.key === 'VolumeUp') {
                 e.preventDefault();
                 video.muted = false;
                 video.volume = Math.min(1, video.volume + 0.05);
             }
-            // Bajar volumen con control remoto
             else if (e.key === 'AudioVolumeDown' || e.key === 'VolumeDown') {
                 e.preventDefault();
                 video.muted = false;
@@ -1273,7 +1351,6 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             }
         });
 
-        // Media Session API para controles multimedia del sistema/TV
         if ('mediaSession' in navigator) {
             navigator.mediaSession.setActionHandler('nexttrack', () => stepChannel(1));
             navigator.mediaSession.setActionHandler('previoustrack', () => stepChannel(-1));
