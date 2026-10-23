@@ -186,85 +186,132 @@
             overflow-y: auto;
         }
 
+        [hidden] { display: none !important; }
+        .player-stage { background: var(--bg-main); }
+
         .video-wrapper {
             position: relative;
-            width: 100%;
+            margin: 16px 16px 0;
+            align-self: stretch;
             aspect-ratio: 16/9;
-            background: #000;
             max-height: 55vh;
             flex-shrink: 0;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 30px rgba(0, 163, 255, 0.06);
         }
+        .video-wrapper:fullscreen, .video-wrapper:-webkit-full-screen {
+            margin: 0; width: 100%; height: 100%; max-height: none; aspect-ratio: auto; border: 0; border-radius: 0;
+        }
+        .video-wrapper:not(.ui) { cursor: none; }
 
-        video { width: 100%; height: 100%; object-fit: contain; }
+        video { width: 100%; height: 100%; object-fit: contain; background: #000; display: block; }
 
         .stream-msg {
             position: absolute;
             inset: 0;
+            z-index: 20;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.6);
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.45);
             font-size: 13px;
             font-weight: 600;
             text-align: center;
             padding: 16px;
+            pointer-events: none;
         }
         .stream-msg.on { display: flex; }
+        .stream-msg.err { background: rgba(5, 7, 12, 0.9); pointer-events: auto; }
+        .spinner {
+            width: 40px; height: 40px; border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.12);
+            border-top-color: var(--rio-gold); border-right-color: var(--rio-blue);
+            animation: spin 0.8s linear infinite;
+        }
+        .stream-msg.err .spinner { display: none; }
+        .err-ic { display: none; font-size: 32px; color: var(--rio-gold); }
+        .stream-msg.err .err-ic { display: block; }
+        #stream-msg-txt:empty { display: none; }
         .stream-msg button {
-            background: var(--rio-blue);
-            color: #fff;
-            border: none;
-            border-radius: 16px;
-            padding: 7px 16px;
-            font-weight: 700;
-            cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, var(--rio-blue), var(--rio-dark));
+            color: #fff; border: none; border-radius: 18px;
+            padding: 8px 18px; font-weight: 700; font-size: 12px; cursor: pointer;
+            box-shadow: 0 0 14px rgba(0, 163, 255, 0.35);
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .controls-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 10;
+        .vp-ui {
+            position: absolute; inset: 0; z-index: 10;
+            display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
         }
+        .video-wrapper.ui .vp-ui { opacity: 1; pointer-events: auto; }
 
-        .current-ch-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .vp-top {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            padding: 12px 14px 30px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent);
+        }
+        .vp-ch { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .vp-ch-txt { display: flex; flex-direction: column; min-width: 0; }
+        .vp-ch-name { font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .vp-ch-show { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .vp-live {
+            display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+            background: rgba(255, 59, 59, 0.16); border: 1px solid rgba(255, 59, 59, 0.45);
+            color: #ff6b6b; font-size: 10px; font-weight: 800; letter-spacing: 0.6px;
+            padding: 4px 9px; border-radius: 12px;
+        }
+        .vp-live i { width: 6px; height: 6px; border-radius: 50%; background: #ff3b3b; box-shadow: 0 0 6px #ff3b3b; animation: blink 1.5s infinite; }
 
         .logo-box {
-            width: 38px;
-            height: 28px;
-            background: #111;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-            border: 1px solid rgba(255,255,255,0.1);
+            width: 40px; height: 30px; background: #111; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .logo-box img { width: 100%; height: 100%; object-fit: contain; }
 
-        .btn-ctrl {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: #fff;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 13px;
+        .vp-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        .vp-big {
+            display: none; align-items: center; justify-content: center;
+            width: 68px; height: 68px; padding-left: 4px; border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.25); background: rgba(0, 0, 0, 0.45);
+            -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+            color: #fff; font-size: 24px; cursor: pointer; pointer-events: auto;
+            box-shadow: 0 0 24px rgba(0, 163, 255, 0.3);
         }
+        .video-wrapper.paused .vp-big { display: flex; }
+
+        .vp-bottom { padding: 28px 12px 10px; background: linear-gradient(to top, rgba(0, 0, 0, 0.92), transparent); }
+        .vp-progress { height: 3px; border-radius: 2px; background: rgba(255, 255, 255, 0.18); margin-bottom: 10px; overflow: hidden; }
+        .vp-progress div { height: 100%; width: 0; background: linear-gradient(90deg, var(--rio-blue), var(--rio-gold)); transition: width 0.4s ease; }
+        .vp-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .vp-group { display: flex; align-items: center; gap: 6px; }
+
+        .btn-ctrl {
+            background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #fff; width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 13px; transition: background 0.15s, transform 0.1s;
+        }
+        .btn-ctrl:hover { background: rgba(0, 163, 255, 0.4); }
+        .btn-ctrl:active { transform: scale(0.92); }
+        .btn-ctrl.primary { width: 42px; height: 42px; font-size: 15px; border: none; background: linear-gradient(135deg, var(--rio-blue), var(--rio-dark)); box-shadow: 0 0 14px rgba(0, 163, 255, 0.4); }
+
+        .vol { display: flex; align-items: center; gap: 4px; }
+        .vol input {
+            -webkit-appearance: none; appearance: none; width: 72px; height: 4px; border-radius: 2px;
+            background: rgba(255, 255, 255, 0.25); outline: none; cursor: pointer; user-select: auto;
+        }
+        .vol input::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--rio-gold); border: 0; }
+        .vol input::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--rio-gold); border: 0; }
+        @media (hover: none) { .vol input { display: none; } }
 
         .epg-container { padding: 16px; background: var(--bg-main); flex: 1; }
 
@@ -451,12 +498,16 @@
         .channel-card-cat { font-size: 10px; color: var(--text-muted); }
         .fav-btn { background: none; border: none; color: #3d4859; font-size: 16px; cursor: pointer; padding: 4px 6px; }
         .fav-btn.on { color: var(--rio-gold); }
-        .fallback-txt { font-size: 10px; font-weight: 900; color: var(--rio-blue); text-align: center; }
+        .fallback-txt {
+            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+            border-radius: 4px; font-size: 10px; font-weight: 800; letter-spacing: 0.3px; color: #fff;
+            background: linear-gradient(135deg, hsl(var(--h, 210) 70% 40%), hsl(calc(var(--h, 210) + 40) 70% 26%));
+        }
 
         @media (max-width: 800px) {
             .app-body { flex-direction: column; overflow-y: auto; }
             .player-stage { flex: none; position: sticky; top: 0; z-index: 50; background: #000; overflow: visible; }
-            .video-wrapper { height: 210px; max-height: 32vh; aspect-ratio: auto; }
+            .video-wrapper { width: 100%; margin: 0; align-self: auto; border-radius: 0; border-width: 0 0 1px; box-shadow: none; height: 210px; max-height: 32vh; aspect-ratio: auto; }
             .epg-container { padding: 10px; flex: none; }
             .channels-sidebar { width: 100%; flex: 1; border-left: none; border-top: 1px solid var(--border); }
             .channels-grid { overflow-y: visible; }
@@ -485,22 +536,47 @@
 
         <div class="app-body">
             <main class="player-stage">
-                <div class="video-wrapper" id="video-wrapper">
+                <div class="video-wrapper paused ui" id="video-wrapper">
                     <video id="video-element" autoplay playsinline></video>
                     <div class="stream-msg" id="stream-msg">
+                        <div class="spinner"></div>
+                        <i class="fa-solid fa-triangle-exclamation err-ic"></i>
                         <span id="stream-msg-txt">Cargando…</span>
-                        <button id="btn-retry" hidden>Reintentar</button>
+                        <button id="btn-retry" hidden><i class="fa-solid fa-rotate-right"></i> Reintentar</button>
                     </div>
-                    <div class="controls-overlay">
-                        <div class="current-ch-info">
-                            <div class="logo-box">
-                                <img id="player-ch-logo" src="" alt="" onerror="handleImgError(this)">
+                    <div class="vp-ui">
+                        <div class="vp-top">
+                            <div class="vp-ch">
+                                <div class="logo-box">
+                                    <img id="player-ch-logo" referrerpolicy="no-referrer" alt="" onerror="handleImgError(this)">
+                                </div>
+                                <div class="vp-ch-txt">
+                                    <span class="vp-ch-name" id="player-ch-title">Seleccioná canal</span>
+                                    <span class="vp-ch-show" id="player-show">En vivo</span>
+                                </div>
                             </div>
-                            <span id="player-ch-title" style="font-size: 13px; font-weight: 700;">Seleccioná canal</span>
+                            <div class="vp-live"><i></i>EN VIVO</div>
                         </div>
-                        <div style="display: flex; gap: 6px;">
-                            <button class="btn-ctrl" id="btn-play-pause" aria-label="Pausar"><i class="fa-solid fa-pause"></i></button>
-                            <button class="btn-ctrl" id="btn-fullscreen" aria-label="Pantalla completa"><i class="fa-solid fa-expand"></i></button>
+                        <div class="vp-center">
+                            <button class="vp-big" id="btn-center" aria-label="Reproducir"><i class="fa-solid fa-play"></i></button>
+                        </div>
+                        <div class="vp-bottom">
+                            <div class="vp-progress"><div id="player-progress"></div></div>
+                            <div class="vp-bar">
+                                <div class="vp-group">
+                                    <button class="btn-ctrl" id="btn-prev" aria-label="Canal anterior"><i class="fa-solid fa-backward-step"></i></button>
+                                    <button class="btn-ctrl primary" id="btn-play-pause" aria-label="Pausar"><i class="fa-solid fa-pause"></i></button>
+                                    <button class="btn-ctrl" id="btn-next" aria-label="Canal siguiente"><i class="fa-solid fa-forward-step"></i></button>
+                                    <div class="vol">
+                                        <button class="btn-ctrl" id="btn-mute" aria-label="Silenciar"><i class="fa-solid fa-volume-high"></i></button>
+                                        <input type="range" id="vol-range" min="0" max="1" step="0.02" value="1" aria-label="Volumen">
+                                    </div>
+                                </div>
+                                <div class="vp-group">
+                                    <button class="btn-ctrl" id="btn-pip" aria-label="Imagen en imagen"><i class="fa-regular fa-window-restore"></i></button>
+                                    <button class="btn-ctrl" id="btn-fullscreen" aria-label="Pantalla completa"><i class="fa-solid fa-expand"></i></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -509,7 +585,7 @@
                     <div class="epg-card">
                         <div class="epg-header-info">
                             <div class="epg-logo-box">
-                                <img id="epg-ch-logo" src="" alt="" onerror="handleImgError(this)">
+                                <img id="epg-ch-logo" referrerpolicy="no-referrer" alt="" onerror="handleImgError(this)">
                             </div>
                             <div class="epg-title-box">
                                 <div class="epg-badge" id="epg-ch-group">ARGENTINA</div>
@@ -522,7 +598,7 @@
                                 <span id="epg-show-title">Descargando EPG en vivo...</span>
                                 <span class="show-time" id="epg-show-time">--:--</span>
                             </div>
-                            <div class="show-desc" id="epg-show-desc">Conectando al servidor XMLTV para sincronizar programación del día...</div>
+                            <div class="show-desc" id="epg-show-desc">Conectando a las fuentes XMLTV para sincronizar la programación del día...</div>
                             <div class="epg-progress-bg">
                                 <div class="epg-progress-fill" id="epg-progress"></div>
                             </div>
@@ -557,14 +633,47 @@
         const LOGOS_URL = "https://iptv-org.github.io/api/logos.json";
         const CHANNELS_URL = "https://iptv-org.github.io/api/channels.json";
 
+        // ---------- FUENTES EPG (XMLTV) ----------
+        // El orden es prioridad: si un canal ya tiene guía de una fuente anterior, las siguientes no lo pisan.
+        // Las que no existan o fallen se saltean solas.
+        const ES1 = n => `https://epgshare01.online/epgshare01/epg_ripper_${n}.xml.gz`;
+        const GTV = (carpeta, n) => `https://raw.githubusercontent.com/globetvapp/epg/main/${carpeta}/${n}.xml`;
         const XMLTV_SOURCES = [
-            "https://epgshare01.online/epgshare01/epg_ripper_AR1.xml.gz",
+            // Argentina
+            ES1('AR1'),
             "https://iptv-epg.org/files/epg-ar.xml",
-            "https://www.open-epg.com/files/argentina2.xml"
+            "https://www.open-epg.com/files/argentina1.xml",
+            "https://www.open-epg.com/files/argentina2.xml",
+            "https://www.open-epg.com/files/argentina3.xml",
+            "https://www.open-epg.com/files/argentina4.xml",
+            GTV('Argentina', 'argentina1'), GTV('Argentina', 'argentina2'),
+            GTV('Argentina', 'argentina3'), GTV('Argentina', 'argentina4'),
+            // Latinoamérica (canales .lat / .us de cable)
+            ES1('MX1'), GTV('Mexico', 'mexico1'), GTV('Mexico', 'mexico2'),
+            ES1('CL1'), GTV('Chile', 'chile1'),
+            ES1('CO1'), GTV('Colombia', 'colombia1'),
+            ES1('UY1'), GTV('Uruguay', 'uruguay1'),
+            GTV('Paraguay', 'paraguay1'),
+            ES1('PE1'), GTV('Peru', 'peru1'),
+            ES1('PA1'), ES1('EC1'),
+            "https://iptv-epg.org/files/epg-mx.xml",
+            "https://iptv-epg.org/files/epg-cl.xml",
+            "https://iptv-epg.org/files/epg-co.xml",
+            // Deportes
+            ES1('DIRECTVSPORTS1'), ES1('BEIN1'), ES1('US_SPORTS1'), GTV('Sports', 'sports1'),
+            // Internacionales (HBO, CNN, DAZN, Eurosport, FIFA+, etc.)
+            ES1('ES1'), GTV('Spain', 'spain1'),
+            ES1('US2'), ES1('US1'), GTV('Usa', 'usa1'),
+            ES1('FR1'), GTV('France', 'france1'),
+            ES1('UK1'), GTV('Unitedkingdom', 'unitedkingdom1'),
+            // Streaming gratuito / FAST
+            ES1('DISTROTV1'), ES1('PLEX1')
         ];
 
         const LOGO_PFX = { i: 'https://i.imgur.com/', w: 'https://upload.wikimedia.org/wikipedia/commons/', b: 'https://i.ibb.co/', o: 'https://images.open-epg.com/' };
-        const logoUrl = l => !l ? null : /^https?:/.test(l) ? l : (LOGO_PFX[l.slice(0, l.indexOf(':'))] || '') + l.slice(l.indexOf(':') + 1);
+        // Wikimedia rompe los thumbnails de tamaños raros o más grandes que el original: usamos el archivo original.
+        const unthumb = u => u.replace(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/[a-z]+\/)thumb\/(\w\/\w\w\/[^/]+)\/[^/]+$/, '$1$2');
+        const logoUrl = l => !l ? null : unthumb(/^https?:/.test(l) ? l : (LOGO_PFX[l.slice(0, l.indexOf(':'))] || '') + l.slice(l.indexOf(':') + 1));
         const channels = `
 Telefe.ar|Telefe HD|Argentina|TELEFE_HD/index.m3u8|w:thumb/c/cc/Telefe_%28nuevo_logo%29.png/960px-Telefe_%28nuevo_logo%29.png
 NetTV.ar|NET TV|Argentina|Net_TV/index.m3u8|o:16782362.png
@@ -726,14 +835,18 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
         .trim().split("\n").map((l, i) => {
             const [id, name, group, path, logo] = l.split("|");
             const raw = /^https?:/.test(path) ? path : STREAM_BASE + path;
-            return { i, id, name, group, logo: logoUrl(logo), proxiedUrl: buildProxyUrl(raw) };
+            return { i, id, name, group, logo: logoUrl(logo), alt: null, repo: null, proxiedUrl: buildProxyUrl(raw) };
         });
 
         const $ = id => document.getElementById(id);
         const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-        const norm = s => s.toLowerCase().replace(/\.(ar|us|lat|py|es|fr|uk)$/, "").replace(/\b(hd|tv|channel|canal)\b/g, "").replace(/[^a-z0-9]/g, "");
+        // Normalizadores para emparejar canales con la guía (sin tildes, sin sufijos de país, sin palabras genéricas)
+        const base = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\.[a-z]{2,3}$/, '');
+        const norm = s => base(s).replace(/\b(hd|tv|channel|canal)\b/g, '').replace(/[^a-z0-9]/g, '');
+        const norm2 = s => base(s).replace(/\b(hd|sd|tv|channel|canal|argentina|latinoamerica|latam|latin|america|international|internacional|ar|mx|us)\b/g, '').replace(/[^a-z0-9]/g, '');
         const hhmm = d => d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false });
         const initials = ch => ch.name.split(/\s+/).map(w => w[0]).join("").slice(0, 3).toUpperCase();
+        const hue = ch => [...ch.name].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
         const store = {
             get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
             set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
@@ -756,34 +869,46 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
         const searchInput = $('search-input');
         const catPills = $('cat-pills');
         const btnPwa = $('btn-pwa');
+        const playerShow = $('player-show');
+        const playerProgress = $('player-progress');
 
         let hlsInstance = null, selectedCategory = 'ALL', currentChannel = null, retries = 0;
-        let epgScheduleData = {}, epgState = 'loading', epgMatched = 0;
+        let epgScheduleData = {}, epgState = 'loading', epgMatched = 0, epgDone = 0;
         let favs = new Set(store.get('ip_favs', []));
 
+        // ---------- LOGOS ----------
+        // Cadena de intentos por canal: logo propio -> vía proxy -> logo de iptv-org -> vía proxy -> iniciales
+        function logoChain(ch) {
+            const a = [];
+            [ch.logo, ch.repo, ch.alt].forEach(u => { if (u && !a.includes(u)) a.push(u, buildProxyUrl(u)); });
+            return a;
+        }
         function showFallback(img, ch) {
             img.style.display = 'none';
             const parent = img.parentElement;
             if (!parent.querySelector('.fallback-txt')) {
                 const span = document.createElement('span');
                 span.className = 'fallback-txt';
+                span.style.setProperty('--h', hue(ch));
                 span.innerText = initials(ch);
                 parent.appendChild(span);
             }
         }
         function handleImgError(img) {
-            const o = img.dataset.o;
-            if (!img.dataset.t && o) { img.dataset.t = 1; img.src = buildProxyUrl(o); return; }
             const ch = channels[+img.dataset.ch] || currentChannel || { name: 'TV' };
+            const chain = ch.id ? logoChain(ch) : [];
+            const next = (+img.dataset.s || 0) + 1;
+            if (next < chain.length) { img.dataset.s = next; img.src = chain[next]; return; }
             showFallback(img, ch);
         }
         function setLogo(img, ch) {
             img.parentElement.querySelector('.fallback-txt')?.remove();
-            img.dataset.ch = ch.i; img.dataset.t = '';
-            if (!ch.logo) return showFallback(img, ch);
+            img.dataset.ch = ch.i; img.dataset.s = 0;
+            const chain = logoChain(ch);
+            if (!chain.length) return showFallback(img, ch);
+            img.referrerPolicy = 'no-referrer';
             img.style.display = 'block';
-            img.dataset.o = ch.logo;
-            img.src = ch.logo;
+            img.src = chain[0];
         }
         async function getJson(u) {
             for (const f of [u, buildProxyUrl(u)]) {
@@ -801,8 +926,9 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             return m;
         }
         async function loadLogos() {
+            // m = logos de iptv-org por id de canal; sirven de respaldo para TODOS los canales
             const apply = m => {
-                channels.forEach(c => { if (!c.logo && m[c.id]) c.logo = m[c.id]; });
+                channels.forEach(c => { if (m[c.id]) c.alt = unthumb(m[c.id]); });
                 renderChannels();
                 if (currentChannel) { setLogo(playerChLogo, currentChannel); setLogo(epgChLogo, currentChannel); }
             };
@@ -810,7 +936,7 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             const logos = await getJson(LOGOS_URL);
             if (!logos) return;
             const m = pickLogos(logos, new Set(channels.map(c => c.id)));
-            const missing = channels.filter(c => !c.logo && !m[c.id]);
+            const missing = channels.filter(c => !m[c.id]);
             if (missing.length) {
                 const list = await getJson(CHANNELS_URL);
                 if (list) {
@@ -819,7 +945,7 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
                     const alt = {};
                     missing.forEach(c => {
                         const ids = by[norm(c.name)] || [], suf = c.id.split('.').pop();
-                        const pick = ids.find(i => /\.(ar|lat)$/.test(i)) || ids.find(i => i.split('.').pop() === suf);
+                        const pick = ids.find(i => /\.(ar|lat)$/.test(i)) || ids.find(i => i.split('.').pop() === suf) || ids[0];
                         if (pick) alt[pick] = c.id;
                     });
                     const m2 = pickLogos(logos, new Set(Object.keys(alt)));
@@ -829,6 +955,53 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             store.set('ip_logos', m); apply(m);
         }
 
+        // Logos de tv-logo/tv-logos (PNG 512px pensados para fondo oscuro), buscados por nombre en el repo de GitHub
+        const TVL_FOLDERS = ['argentina', 'world-latin-america', 'united-states', 'spain', 'france', 'united-kingdom', 'international', 'mexico', 'world-europe'];
+        const TVL_RAW = 'https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/';
+        const LOGO_ALIAS = {
+            'InvestigationDiscovery.lat': 'Investigation Discovery', 'SonyChannel.lat': 'Sony Channel',
+            'UniversalTV.lat': 'Universal Channel', 'ParamountNetwork.lat': 'Paramount Channel',
+            'WarnerChannel.lat': 'Warner TV', 'AdultSwimLatinAmerica.us': 'Adult Swim',
+            'ELatinAmerica.us': 'E Entertainment', 'TelemundoInternacional.us': 'Telemundo',
+            'CNNInternational.us': 'CNN International', 'TyCSports.ar': 'TyC Sports'
+        };
+        async function listFolder(f) {
+            const t = await getJson('https://api.github.com/repos/tv-logo/tv-logos/git/trees/' + encodeURIComponent('main:countries/' + f));
+            if (t && Array.isArray(t.tree)) return t.tree.filter(x => x.type === 'blob').map(x => x.path);
+            const c = await getJson('https://api.github.com/repos/tv-logo/tv-logos/contents/countries/' + f);
+            return Array.isArray(c) ? c.map(x => x.name) : null;
+        }
+        async function loadRepoLogos() {
+            const applyRepo = m => {
+                channels.forEach(c => { c.repo = m[c.id] || null; });
+                renderChannels();
+                if (currentChannel) { setLogo(playerChLogo, currentChannel); setLogo(epgChLogo, currentChannel); }
+            };
+            const cached = store.get('ip_tvl', null);
+            if (cached && Date.now() - cached.t < cached.ttl) return applyRepo(cached.m);
+            const idx = {}; let ok = 0;
+            const lists = await Promise.all(TVL_FOLDERS.map(listFolder));
+            lists.forEach((files, n) => {
+                if (!files) return;
+                ok++;
+                files.filter(f => /\.png$/i.test(f)).sort((x, y) => /-hz-/.test(x) - /-hz-/.test(y)).forEach(f => {
+                    const slug = f.replace(/\.png$/i, '').replace(/-(hz-)?[a-z]{2,3}$/, '').replace(/-/g, ' ');
+                    const url = TVL_RAW + TVL_FOLDERS[n] + '/' + f;
+                    [norm(slug), norm2(slug)].forEach(k => { if (k && !idx[k]) idx[k] = url; });
+                });
+            });
+            if (!ok) return;
+            const m = {};
+            channels.forEach(c => {
+                const keys = [norm(c.name), norm2(c.name), LOGO_ALIAS[c.id] && norm(LOGO_ALIAS[c.id]), norm(c.id), norm2(c.id)];
+                const k = keys.find(k => k && idx[k]);
+                if (k) m[c.id] = idx[k];
+            });
+            store.set('ip_tvl', { t: Date.now(), ttl: ok === TVL_FOLDERS.length ? 6048e5 : 36e5, m });
+            applyRepo(m);
+        }
+
+        // ---------- EPG ----------
         function parseXmlTvDate(s) {
             const m = s.match(/^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)?\s*([+-])?(\d\d)?(\d\d)?/);
             if (!m) return null;
@@ -849,35 +1022,56 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             }
             return null;
         }
+        // Descarga con máximo 3 pedidos en simultáneo
+        function pool(n) {
+            let active = 0; const q = [];
+            const go = () => {
+                while (active < n && q.length) { active++; q.shift()().finally(() => { active--; go(); }); }
+            };
+            return fn => new Promise((res, rej) => { q.push(() => fn().then(res, rej)); go(); });
+        }
         async function fetchAndParseXmlTv() {
-            const byNorm = {};
-            channels.forEach(c => { byNorm[norm(c.id)] = c; byNorm[norm(c.name)] = c; });
+            const byId = {}, byA = {}, byB = {};
+            channels.forEach(c => {
+                byId[c.id] = c;
+                byA[norm(c.id)] = c; byA[norm(c.name)] = c;
+                byB[norm2(c.id)] = c; byB[norm2(c.name)] = c;
+            });
+            const look = (map, k) => k ? map[k] : undefined;
             const from = Date.now() - 3 * 36e5, to = Date.now() + 30 * 36e5;
             const data = {};
-            for (const src of XMLTV_SOURCES) {
-                const xml = await getXml(src);
-                if (!xml) continue;
-                const doc = new DOMParser().parseFromString(xml, 'text/xml');
-                const map = {};
-                doc.querySelectorAll('channel').forEach(el => {
-                    const id = el.getAttribute('id');
-                    const names = [...el.querySelectorAll('display-name')].map(n => norm(n.textContent));
-                    const hit = channels.find(c => c.id === id) || byNorm[norm(id)] || names.map(n => byNorm[n]).find(Boolean);
-                    if (hit && !data[hit.id]) map[id] = hit.id;
-                });
-                doc.querySelectorAll('programme').forEach(p => {
-                    const cid = map[p.getAttribute('channel')];
-                    if (!cid) return;
-                    const s = parseXmlTvDate(p.getAttribute('start') || ''), e = parseXmlTvDate(p.getAttribute('stop') || '');
-                    const t = p.querySelector('title');
-                    if (!s || !e || !t || e < from || s > to) return;
-                    (data[cid] = data[cid] || []).push({ start: s, stop: e, title: t.textContent, desc: p.querySelector('desc')?.textContent || '' });
-                });
-                if (Object.keys(data).length >= channels.length) break;
-            }
-            Object.values(data).forEach(a => a.sort((x, y) => x.start - y.start));
             epgScheduleData = data;
-            epgMatched = Object.keys(data).length;
+            const gate = pool(3);
+            const jobs = XMLTV_SOURCES.map(u => gate(() => getXml(u)));
+
+            for (const job of jobs) {
+                const xml = await job;
+                epgDone++;
+                if (xml && xml.length < 9e7) {
+                    try {
+                        const doc = new DOMParser().parseFromString(xml, 'text/xml');
+                        const map = {}, claimed = new Set();
+                        doc.querySelectorAll('channel').forEach(el => {
+                            const id = el.getAttribute('id') || '';
+                            const names = [...el.querySelectorAll('display-name')].map(n => n.textContent);
+                            const hit = byId[id] || look(byA, norm(id)) || names.map(n => look(byA, norm(n))).find(Boolean)
+                                || look(byB, norm2(id)) || names.map(n => look(byB, norm2(n))).find(Boolean);
+                            if (hit && !data[hit.id] && !claimed.has(hit.id)) { map[id] = hit.id; claimed.add(hit.id); }
+                        });
+                        doc.querySelectorAll('programme').forEach(p => {
+                            const cid = map[p.getAttribute('channel')];
+                            if (!cid) return;
+                            const s = parseXmlTvDate(p.getAttribute('start') || ''), e = parseXmlTvDate(p.getAttribute('stop') || '');
+                            const t = p.querySelector('title');
+                            if (!s || !e || !t || e < from || s > to) return;
+                            (data[cid] = data[cid] || []).push({ start: s, stop: e, title: t.textContent, desc: p.querySelector('desc')?.textContent || '' });
+                        });
+                        claimed.forEach(id => { if (data[id]) data[id].sort((x, y) => x.start - y.start); });
+                    } catch (err) { console.warn('EPG:', err); }
+                }
+                epgMatched = Object.keys(data).length;
+                updateDynamicEpg();
+            }
             epgState = epgMatched ? 'ok' : 'fail';
             updateDynamicEpg();
         }
@@ -891,25 +1085,35 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
                 epgShowTitle.innerText = `${currentChannel.name} - En Vivo`;
                 epgShowTime.innerText = 'En Vivo';
                 epgProgress.style.width = '100%';
+                playerShow.innerText = 'En vivo';
+                playerProgress.style.width = '100%';
                 epgShowDesc.innerText =
-                    epgState === 'loading' ? 'Descargando la guía de programación...' :
+                    epgState === 'loading' ? `Buscando la guía en ${XMLTV_SOURCES.length} fuentes... (${epgDone}/${XMLTV_SOURCES.length}, ${epgMatched} canales con guía)` :
                     epgState === 'fail' ? 'No se pudo descargar la guía desde ninguna fuente XMLTV.' :
-                    `Esta fuente no trae programación para este canal (${epgMatched} canales con guía).`;
+                    `Ninguna fuente trae programación para este canal (${epgMatched} de ${channels.length} canales tienen guía).`;
                 return;
             }
             const p = list[i];
             epgShowTitle.innerText = p.title;
             epgShowTime.innerText = `${hhmm(p.start)} - ${hhmm(p.stop)} HS`;
             epgShowDesc.innerText = p.desc || 'Sin descripción disponible para este programa.';
-            epgProgress.style.width = Math.min(100, Math.max(2, Math.round((now - p.start) / (p.stop - p.start) * 100))) + '%';
+            const pct = Math.min(100, Math.max(2, Math.round((now - p.start) / (p.stop - p.start) * 100))) + '%';
+            epgProgress.style.width = pct;
+            playerProgress.style.width = pct;
+            playerShow.innerText = p.title;
             epgNext.innerHTML = list.slice(i + 1, i + 4).map(n => `<div><b>${hhmm(n.start)}</b>${esc(n.title)}</div>`).join('');
         }
 
+        // ---------- REPRODUCTOR ----------
         function setMsg(text, retry) {
             $('stream-msg-txt').innerText = text || '';
             $('btn-retry').hidden = !retry;
-            $('stream-msg').classList.toggle('on', !!text);
+            const m = $('stream-msg');
+            m.classList.toggle('on', !!text);
+            m.classList.toggle('err', !!retry);
         }
+        // Si el navegador bloquea el autoplay, saca el "Cargando…" y deja el botón de play a la vista
+        const tryPlay = () => video.play().catch(() => { setMsg(''); syncPlay(); });
         function streamFail() { setMsg(`No se pudo cargar ${currentChannel.name}. Puede que el canal esté caído.`, true); }
 
         function loadStream() {
@@ -920,7 +1124,7 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
                 hlsInstance = new Hls({ enableWorker: true });
                 hlsInstance.loadSource(currentChannel.proxiedUrl);
                 hlsInstance.attachMedia(video);
-                hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+                hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => tryPlay());
                 hlsInstance.on(Hls.Events.ERROR, (_, d) => {
                     if (!d.fatal) return;
                     if (retries++ < 3) {
@@ -930,7 +1134,7 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = currentChannel.proxiedUrl;
-                video.play().catch(() => {});
+                tryPlay();
             } else streamFail();
         }
 
@@ -944,6 +1148,7 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             epgChGroup.innerText = channel.group;
             updateDynamicEpg();
             loadStream();
+            showUi();
             renderChannels();
             document.querySelector('.channel-card.active')?.scrollIntoView({ block: 'nearest' });
         }
@@ -951,10 +1156,69 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
         video.addEventListener('playing', () => setMsg(''));
         video.addEventListener('waiting', () => setMsg('Cargando…'));
         video.addEventListener('error', () => currentChannel && !hlsInstance && streamFail());
-        video.addEventListener('play', () => btnPlayPause.innerHTML = '<i class="fa-solid fa-pause"></i>');
-        video.addEventListener('pause', () => btnPlayPause.innerHTML = '<i class="fa-solid fa-play"></i>');
         $('btn-retry').onclick = () => { retries = 0; loadStream(); };
-        btnPlayPause.onclick = () => video.paused ? video.play() : video.pause();
+
+        // Controles del player: se ocultan solos a los 3 s mientras reproduce
+        const wrap = $('video-wrapper'), btnCenter = $('btn-center'), btnMute = $('btn-mute'),
+              volRange = $('vol-range'), btnPip = $('btn-pip');
+        let uiTimer = null;
+        function showUi() {
+            wrap.classList.add('ui');
+            clearTimeout(uiTimer);
+            if (!video.paused) uiTimer = setTimeout(() => wrap.classList.remove('ui'), 3000);
+        }
+        function syncPlay() {
+            const p = video.paused;
+            wrap.classList.toggle('paused', p);
+            btnPlayPause.innerHTML = `<i class="fa-solid fa-${p ? 'play' : 'pause'}"></i>`;
+            btnPlayPause.setAttribute('aria-label', p ? 'Reproducir' : 'Pausar');
+            showUi();
+        }
+        const togglePlay = () => video.paused ? video.play().catch(syncPlay) : video.pause();
+        ['play', 'pause', 'playing', 'loadstart', 'emptied', 'ended'].forEach(ev => video.addEventListener(ev, syncPlay));
+        btnPlayPause.onclick = btnCenter.onclick = togglePlay;
+
+        wrap.addEventListener('mousemove', showUi);
+        wrap.addEventListener('mouseleave', () => { if (!video.paused) wrap.classList.remove('ui'); });
+        wrap.addEventListener('click', e => {
+            if (e.target.closest('button, input')) return;
+            if (!wrap.classList.contains('ui')) return showUi();
+            togglePlay();
+        });
+        wrap.addEventListener('dblclick', e => { if (!e.target.closest('button, input')) btnFullscreen.click(); });
+
+        function syncVol() {
+            const v = video.muted ? 0 : video.volume;
+            volRange.value = v;
+            btnMute.innerHTML = `<i class="fa-solid fa-${v === 0 ? 'volume-xmark' : v < 0.5 ? 'volume-low' : 'volume-high'}"></i>`;
+            store.set('ip_vol', { v: video.volume, m: video.muted });
+        }
+        const sv = store.get('ip_vol', null);
+        if (sv) { video.volume = Math.min(1, Math.max(0, +sv.v || 0)); video.muted = !!sv.m; }
+        video.addEventListener('volumechange', syncVol);
+        syncVol();
+        volRange.oninput = () => { video.muted = false; video.volume = +volRange.value; };
+        volRange.onchange = () => volRange.blur();
+        btnMute.onclick = () => { video.muted = !video.muted; if (!video.muted && video.volume === 0) video.volume = 0.5; };
+
+        if (document.pictureInPictureEnabled && video.requestPictureInPicture) {
+            btnPip.onclick = () => (document.pictureInPictureElement ? document.exitPictureInPicture() : video.requestPictureInPicture()).catch(() => {});
+        } else btnPip.hidden = true;
+
+        function stepChannel(dir) {
+            const l = visibleChannels(); if (!l.length) return;
+            const n = l.findIndex(c => currentChannel && c.i === currentChannel.i);
+            switchChannel(l[((n < 0 ? 0 : n) + dir + l.length) % l.length]);
+        }
+        $('btn-prev').onclick = () => stepChannel(-1);
+        $('btn-next').onclick = () => stepChannel(1);
+
+        const fsIcon = () => {
+            const on = document.fullscreenElement || document.webkitFullscreenElement;
+            btnFullscreen.innerHTML = `<i class="fa-solid fa-${on ? 'compress' : 'expand'}"></i>`;
+        };
+        document.addEventListener('fullscreenchange', fsIcon);
+        document.addEventListener('webkitfullscreenchange', fsIcon);
 
         // Pantalla completa y rotación horizontal automática
         btnFullscreen.onclick = async () => {
@@ -985,6 +1249,7 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             }
         });
 
+        // ---------- LISTA DE CANALES ----------
         const cats = [['ALL', 'Todos'], ['★ Favoritos', '★ Favoritos'], ...[...new Set(channels.map(c => c.group))].map(g => [g, g])];
         catPills.innerHTML = cats.map(([k, l]) => `<div class="cat-chip${k === 'ALL' ? ' active' : ''}" data-cat="${esc(k)}">${esc(l)}</div>`).join('');
 
@@ -998,12 +1263,13 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
         function renderChannels() {
             gridContainer.innerHTML = '';
             visibleChannels().forEach(ch => {
+                const first = logoChain(ch)[0];
                 const card = document.createElement('div');
                 card.className = 'channel-card' + (currentChannel && currentChannel.i === ch.i ? ' active' : '');
                 card.innerHTML = `
                     <div class="ch-logo-small">
-                        ${ch.logo ? `<img loading="lazy" src="${esc(ch.logo)}" data-o="${esc(ch.logo)}" data-ch="${ch.i}" alt="" onerror="handleImgError(this)">`
-                                  : `<span class="fallback-txt">${esc(initials(ch))}</span>`}
+                        ${first ? `<img loading="lazy" referrerpolicy="no-referrer" src="${esc(first)}" data-s="0" data-ch="${ch.i}" alt="" onerror="handleImgError(this)">`
+                                : `<span class="fallback-txt" style="--h:${hue(ch)}">${esc(initials(ch))}</span>`}
                     </div>
                     <div class="channel-card-details">
                         <div class="channel-card-name">${esc(ch.name)}</div>
@@ -1032,11 +1298,12 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             renderChannels();
         };
         document.addEventListener('keydown', e => {
-            if (e.target.tagName === 'INPUT' || !['ArrowUp', 'ArrowDown'].includes(e.key)) return;
-            e.preventDefault();
-            const l = visibleChannels(); if (!l.length) return;
-            const n = l.findIndex(c => currentChannel && c.i === currentChannel.i);
-            switchChannel(l[((n < 0 ? 0 : n) + (e.key === 'ArrowDown' ? 1 : -1) + l.length) % l.length]);
+            if (e.target.tagName === 'INPUT') return;
+            const k = e.key.toLowerCase();
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); stepChannel(e.key === 'ArrowDown' ? 1 : -1); }
+            else if ((k === ' ' && !e.target.closest('button')) || k === 'k') { e.preventDefault(); togglePlay(); }
+            else if (k === 'm') btnMute.click();
+            else if (k === 'f') btnFullscreen.click();
         });
 
         // ---------- PWA ----------
@@ -1063,6 +1330,7 @@ XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineter
             renderChannels();
             switchChannel(channels.find(c => c.id === store.get('ip_last', '')) || channels[0]);
             loadLogos();
+            loadRepoLogos();
             fetchAndParseXmlTv();
             setInterval(updateDynamicEpg, 30000);
         });
