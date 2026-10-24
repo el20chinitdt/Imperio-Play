@@ -700,9 +700,12 @@
         const unthumb = u => u.replace(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/[a-z]+\/)thumb\/(\w\/\w\w\/[^/]+)\/[^/]+$/, '$1$2');
         const logoUrl = l => !l ? null : unthumb(/^https?:/.test(l) ? l : (LOGO_PFX[l.slice(0, l.indexOf(':'))] || '') + l.slice(l.indexOf(':') + 1));
         
-        // --- GRILLA CON REGIONALES AL FINAL (.11) Y NOTICIAS DESDE CANAL 2 ---
+        // --- GRILLA LEGAL: CANAL LOCAL EN EL 2, NOTICIAS DESDE EL 3 ---
         const rawChannels = [
-            // === 1. NOTICIAS (Inicia en Canal 2) ===
+            // === CANAL LOCAL (Apertura Legal en Canal 2 según Ley 26.522) ===
+            "CanalLocal.ar|CANAL LOCAL|Noticias|http://181.209.37.74:8001/play/a0e1/index.m3u8?token=miguel2026",
+
+            // === 1. NOTICIAS (Inicia en Canal 3) ===
             "TN.ar|TN HD|Noticias|http://181.209.37.74:8001/play/a097/index.m3u8?token=miguel2026|w:thumb/2/23/Todo_Noticias_logo_2016.svg/500px-Todo_Noticias_logo_2016.svg.png",
             "A24.ar|A24|Noticias|http://181.209.37.74:8001/play/a05u/index.m3u8?token=miguel2026|i:LnXQkIU.png",
             "C5N.ar|C5N|Noticias|http://181.209.37.74:8001/play/a05v/index.m3u8?token=miguel2026|i:5ZNZYjO.png",
@@ -867,7 +870,6 @@
             "CanalPulpoTV.ar|Canal Pulpo TV|Regionales|https://vs20.live.opencaster.com/canalpulpotv_bdeee6e2/index.m3u8|https://new.opencaster.com/uploads/logos/logo_306_1756336707.png",
             "CiudadMagica.ar|Ciudad Mágica|Regionales|https://lbgo.bozztv.com/ssh101/ssh101/verycoolfgr/playlist.m3u8|i:HJkSz2U.png",
             "Aunar.ar|AUNAR|Regionales|http://181.209.37.74:8001/play/a0e0/index.m3u8?token=miguel2026",
-            "CanalLocal.ar|CANAL LOCAL|Regionales|http://181.209.37.74:8001/play/a0e1/index.m3u8?token=miguel2026",
             "Multivision.ar|MULTIVISION|Regionales|http://181.209.37.74:8001/play/a0e3/index.m3u8?token=miguel2026",
             "RuralTV.ar|Rural|Regionales|http://181.209.37.74:8001/play/a06k/index.m3u8?token=miguel2026",
             "TelePosadas.ar|Tele Posadas|Regionales|https://live20.bozztv.com/giatv/giatv-teleposadaso01/teleposadaso01/playlist.m3u8|i:88MVgwX.png",
@@ -1213,7 +1215,7 @@
             epgNext.innerHTML = list.slice(i + 1, i + 4).map(n => `<div><b>${hhmm(n.start)}</b>${esc(n.title)}</div>`).join('');
         }
 
-        // ---------- REPRODUCTOR ----------
+        // ---------- REPRODUCTOR HLS MÁXIMA VELOCIDAD (BÚFER 2 SEGUNDOS) ----------
         function setMsg(text, retry) {
             $('stream-msg-txt').innerText = text || '';
             $('btn-retry').hidden = !retry;
@@ -1229,7 +1231,20 @@
             if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
             video.removeAttribute('src');
             if (window.Hls && Hls.isSupported()) {
-                hlsInstance = new Hls({ enableWorker: true });
+                // CONFIGURACIÓN EXTREMA DE BAJA LATENCIA Y ARRANQUE INMEDIATO
+                hlsInstance = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 0,
+                    maxBufferLength: 2,
+                    maxMaxBufferLength: 5,
+                    maxBufferSize: 10 * 1024 * 1024,
+                    liveSyncDuration: 1,
+                    liveMaxLatencyDuration: 4,
+                    liveDurationInfinity: true,
+                    highBufferWatchdogPeriod: 1,
+                    fastSwitch: true
+                });
                 hlsInstance.loadSource(currentChannel.proxiedUrl);
                 hlsInstance.attachMedia(video);
                 hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => tryPlay());
@@ -1237,7 +1252,7 @@
                     if (!d.fatal) return;
                     if (retries++ < 3) {
                         if (d.type === Hls.ErrorTypes.MEDIA_ERROR) hlsInstance.recoverMediaError();
-                        else setTimeout(() => hlsInstance && hlsInstance.startLoad(), 1500 * retries);
+                        else setTimeout(() => hlsInstance && hlsInstance.startLoad(), 500 * retries);
                     } else streamFail();
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
@@ -1356,15 +1371,12 @@
             }
         });
 
-        // ---------- ZAPPING NUMÉRICO Y CONTROL REMOTO (GLOBAL / FULLSCREEN) ----------
+        // ---------- ZAPPING INSTANTÁNEO Y AUTOMÁTICO (HASTA NÚMEROS GRANDES) ----------
         function showOsd(text) {
             channelOsd.innerText = text;
             channelOsd.classList.add('show');
             clearTimeout(channelInputTimer);
-            channelInputTimer = setTimeout(() => {
-                channelOsd.classList.remove('show');
-                channelInputBuffer = '';
-            }, 1800);
+            channelOsd.classList.add('show');
         }
 
         function jumpToChannelByNumber(num) {
@@ -1381,9 +1393,22 @@
             channelInputBuffer += numChar;
             showOsd(`CH ${channelInputBuffer}`);
             const targetNum = parseInt(channelInputBuffer, 10);
-            const maxNum = channels.length + 1;
-            if (targetNum > maxNum || channelInputBuffer.length >= 3) {
+            
+            // Verificamos si existe exacto
+            const exactMatch = channels.some(c => c.channelNumber === targetNum);
+            // Verificamos si hay canales mayores que empiecen con esta combinación (ej: 2 y 25)
+            const possibleMoreDigits = channels.some(c => String(c.channelNumber).startsWith(channelInputBuffer) && String(c.channelNumber) !== channelInputBuffer);
+
+            if (!possibleMoreDigits || channelInputBuffer.length >= 3) {
+                // Si no hay más combinaciones posibles o ya tipeó 3 dígitos, salta de inmediato
                 jumpToChannelByNumber(targetNum);
+            } else {
+                // Si es un número válido pero puede seguir escribiendo (ej: apretó 2, y existe el 20, 21...),
+                // damos un lapso súper corto de 250ms para completar el segundo dígito, o salta si no presiona más.
+                clearTimeout(channelInputTimer);
+                channelInputTimer = setTimeout(() => {
+                    jumpToChannelByNumber(targetNum);
+                }, 250); 
             }
         }
 
