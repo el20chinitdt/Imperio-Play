@@ -246,6 +246,26 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* OSD para zapping numérico */
+        .channel-osd {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(5, 7, 12, 0.85);
+            border: 2px solid var(--rio-gold);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 20px;
+            z-index: 50;
+            display: none;
+            box-shadow: 0 0 20px rgba(255, 184, 0, 0.4);
+            letter-spacing: 1px;
+        }
+        .channel-osd.show { display: block; }
+
         .vp-ui {
             position: absolute; inset: 0; z-index: 10;
             display: flex; flex-direction: column; justify-content: space-between;
@@ -363,7 +383,6 @@
         }
 
         .show-time { font-size: 11px; color: var(--rio-gold); font-weight: 600; white-space: nowrap; }
-
         .show-desc { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
 
         .epg-progress-bg {
@@ -471,6 +490,19 @@
             box-shadow: inset 3px 0 0 var(--rio-gold);
         }
 
+        .ch-num {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--rio-gold);
+            background: rgba(255, 184, 0, 0.1);
+            border: 1px solid rgba(255, 184, 0, 0.2);
+            padding: 2px 5px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            min-width: 28px;
+            text-align: center;
+        }
+
         .ch-logo-small {
             width: 36px;
             height: 36px;
@@ -538,6 +570,7 @@
             <main class="player-stage">
                 <div class="video-wrapper paused ui" id="video-wrapper">
                     <video id="video-element" autoplay playsinline></video>
+                    <div class="channel-osd" id="channel-osd">CH --</div>
                     <div class="stream-msg" id="stream-msg">
                         <div class="spinner"></div>
                         <i class="fa-solid fa-triangle-exclamation err-ic"></i>
@@ -588,7 +621,7 @@
                                 <img id="epg-ch-logo" referrerpolicy="no-referrer" alt="" onerror="handleImgError(this)">
                             </div>
                             <div class="epg-title-box">
-                                <div class="epg-badge" id="epg-ch-group">ARGENTINA</div>
+                                <div class="epg-badge" id="epg-ch-group">NOTICIAS</div>
                                 <div class="epg-channel-name" id="epg-ch-name">Cargando...</div>
                             </div>
                         </div>
@@ -667,9 +700,22 @@
         const unthumb = u => u.replace(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/[a-z]+\/)thumb\/(\w\/\w\w\/[^/]+)\/[^/]+$/, '$1$2');
         const logoUrl = l => !l ? null : unthumb(/^https?:/.test(l) ? l : (LOGO_PFX[l.slice(0, l.indexOf(':'))] || '') + l.slice(l.indexOf(':') + 1));
         
-        // --- GRILLA CORREGIDA: CANALES DE TRANSMISIÓN INDEPENDIENTE/LOCAL ALOJADOS EN REGIONALES ---
+        // --- GRILLA CON REGIONALES AL FINAL (.11) Y NOTICIAS DESDE CANAL 2 ---
         const rawChannels = [
-            // === ARGENTINA (AIRE / GENERAL NACIONAL) ===
+            // === 1. NOTICIAS (Inicia en Canal 2) ===
+            "TN.ar|TN HD|Noticias|http://181.209.37.74:8001/play/a097/index.m3u8?token=miguel2026|w:thumb/2/23/Todo_Noticias_logo_2016.svg/500px-Todo_Noticias_logo_2016.svg.png",
+            "A24.ar|A24|Noticias|http://181.209.37.74:8001/play/a05u/index.m3u8?token=miguel2026|i:LnXQkIU.png",
+            "C5N.ar|C5N|Noticias|http://181.209.37.74:8001/play/a05v/index.m3u8?token=miguel2026|i:5ZNZYjO.png",
+            "CronicaTV.ar|CRONICA|Noticias|http://181.209.37.74:8001/play/a05w/index.m3u8?token=miguel2026|w:thumb/6/69/Cr%C3%B3nica_TV_logo_2018.png/500px-Cr%C3%B3nica_TV_logo_2018.png",
+            "Canal26.ar|26TV|Noticias|http://181.209.37.74:8001/play/a05x/index.m3u8?token=miguel2026|w:thumb/c/c5/Canal_26_logo_%282022%29.svg/500px-Canal_26_logo_%282022%29.svg.png",
+            "LNPlus.ar|La Nacion TV|Noticias|http://181.209.37.74:8001/play/a05y/index.m3u8?token=miguel2026|w:thumb/0/02/LN%2B_logo_2020.svg/500px-LN%2B_logo_2020.svg.png",
+            "IPNoticias.ar|IP|Noticias|http://181.209.37.74:8001/play/a0dz/index.m3u8?token=miguel2026|i:dbu9nx4.png",
+            "CNNEspanol.us|CNN en Español|Noticias|http://181.209.37.74:8001/play/a093/index.m3u8?token=miguel2026|w:thumb/b/b3/CNN_en_Espa%C3%B1ol_logo.svg/500px-CNN_en_Espa%C3%B1ol_logo.svg.png",
+            "CNNInternational.us|CNN International|Noticias|CNN_International/index.m3u8",
+            "CN23.ar|CN23|Noticias|http://181.209.37.74:8001/play/a0dq/index.m3u8?token=miguel2026",
+            "CanalE.ar|Canal E|Noticias|https://unlimited1-us.dps.live/perfiltv/perfiltv.smil/playlist.m3u8|b:y4pkxH3/Qtc8-M2-PG-400x400.jpg",
+
+            // === 2. PORTEÑOS / AIRE GENERAL NACIONAL ===
             "Telefe.ar|Telefe HD|Argentina|http://181.209.37.74:8001/play/a08a/index.m3u8?token=miguel2026|w:thumb/c/cc/Telefe_%28nuevo_logo%29.png/960px-Telefe_%28nuevo_logo%29.png",
             "ElTrece.ar|el trece HD|Argentina|http://181.209.37.74:8001/play/a07b/index.m3u8?token=miguel2026|w:thumb/3/36/El_Trece_logo_2016.svg/500px-El_Trece_logo_2016.svg.png",
             "AmericaTV.ar|America TV HD|Argentina|http://181.209.37.74:8001/play/a094/index.m3u8?token=miguel2026|w:thumb/b/be/Am%C3%A9rica_TV_logo_2020.svg/500px-Am%C3%A9rica_TV_logo_2020.svg.png",
@@ -678,20 +724,7 @@
             "NetTV.ar|NET TV|Argentina|Net_TV/index.m3u8|o:16782362.png",
             "ArgentinisimaSatelital.ar|ARGENTINISIMA|Argentina|http://181.209.37.74:8001/play/a0e7/index.m3u8?token=miguel2026|i:xFgJawa.png",
 
-            // === NOTICIAS ===
-            "TN.ar|TN HD|Noticias|http://181.209.37.74:8001/play/a097/index.m3u8?token=miguel2026|w:thumb/2/23/Todo_Noticias_logo_2016.svg/500px-Todo_Noticias_logo_2016.svg.png",
-            "C5N.ar|C5N|Noticias|http://181.209.37.74:8001/play/a05v/index.m3u8?token=miguel2026|i:5ZNZYjO.png",
-            "LNPlus.ar|La Nacion TV|Noticias|http://181.209.37.74:8001/play/a05y/index.m3u8?token=miguel2026|w:thumb/0/02/LN%2B_logo_2020.svg/500px-LN%2B_logo_2020.svg.png",
-            "A24.ar|A24|Noticias|http://181.209.37.74:8001/play/a05u/index.m3u8?token=miguel2026|i:LnXQkIU.png",
-            "CronicaTV.ar|CRONICA|Noticias|http://181.209.37.74:8001/play/a05w/index.m3u8?token=miguel2026|w:thumb/6/69/Cr%C3%B3nica_TV_logo_2018.png/500px-Cr%C3%B3nica_TV_logo_2018.png",
-            "Canal26.ar|26TV|Noticias|http://181.209.37.74:8001/play/a05x/index.m3u8?token=miguel2026|w:thumb/c/c5/Canal_26_logo_%282022%29.svg/500px-Canal_26_logo_%282022%29.svg.png",
-            "IPNoticias.ar|IP|Noticias|http://181.209.37.74:8001/play/a0dz/index.m3u8?token=miguel2026|i:dbu9nx4.png",
-            "CNNEspanol.us|CNN en Español|Noticias|http://181.209.37.74:8001/play/a093/index.m3u8?token=miguel2026|w:thumb/b/b3/CNN_en_Espa%C3%B1ol_logo.svg/500px-CNN_en_Espa%C3%B1ol_logo.svg.png",
-            "CNNInternational.us|CNN International|Noticias|CNN_International/index.m3u8",
-            "CN23.ar|CN23|Noticias|http://181.209.37.74:8001/play/a0dq/index.m3u8?token=miguel2026",
-            "CanalE.ar|Canal E|Noticias|https://unlimited1-us.dps.live/perfiltv/perfiltv.smil/playlist.m3u8|b:y4pkxH3/Qtc8-M2-PG-400x400.jpg",
-
-            // === DEPORTES ===
+            // === 3. DEPORTES ===
             "TyCSports.ar|TyC Sports HD|Deportes|http://181.209.37.74:8001/play/a06x/index.m3u8?token=miguel2026|w:thumb/5/54/TyC_Sports_logo.svg/960px-TyC_Sports_logo.svg.png",
             "TNTSports.ar|TNT Sports HD|Deportes|http://181.209.37.74:8001/play/a06z/index.m3u8?token=miguel2026|w:thumb/a/a2/TNT_Sports_logo.svg/500px-TNT_Sports_logo.svg.png",
             "ESPNPremium.ar|ESPN Premium HD|Deportes|http://181.209.37.74:8001/play/a086/index.m3u8?token=miguel2026",
@@ -714,7 +747,19 @@
             "CanalShowsport.ar|Canal Showsport|Deportes|https://livestream.lumpentv.com.ar/hls/lumpen.m3u8|i:0L9tW3Z.png",
             "FIFAPlus.uk|FIFA+|Deportes|https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8|w:thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
 
-            // === CINE Y SERIES ===
+            // === 4. INFANTILES ===
+            "CartoonNetwork.lat|Cartoon Network HD|Infantiles|http://181.209.37.74:8001/play/a083/index.m3u8?token=miguel2026|w:thumb/8/80/Cartoon_Network_2010_logo.svg/500px-Cartoon_Network_2010_logo.svg.png",
+            "Nickelodeon.lat|Nickelodeon|Infantiles|http://181.209.37.74:8001/play/a08y/index.m3u8?token=miguel2026|w:thumb/7/7a/Nickelodeon_2023_logo.svg/500px-Nickelodeon_2023_logo.svg.png",
+            "NickJr.lat|Nick Jr|Infantiles|http://181.209.37.74:8001/play/a07s/index.m3u8?token=miguel2026",
+            "DisneyChannel.lat|Disney Channel HD|Infantiles|http://181.209.37.74:8001/play/a06w/index.m3u8?token=miguel2026|w:f/ff/2024_Disney_Channel_text_logo.svg",
+            "DisneyJunior.lat|Disney Junior|Infantiles|http://181.209.37.74:8001/play/a08x/index.m3u8?token=miguel2026|w:e/e3/2024_Disney_Jr._Logo.svg",
+            "DiscoveryKids.lat|Discovery Kids|Infantiles|http://181.209.37.74:8001/play/a07r/index.m3u8?token=miguel2026|w:thumb/d/dc/2016_Discovery_Kids_logo.svg/1164px-2016_Discovery_Kids_logo.svg.png",
+            "Pakapaka.ar|Pakapaka|Infantiles|http://181.209.37.74:8001/play/a05t/index.m3u8?token=miguel2026|w:thumb/0/01/Pakapaka_logo_2020.svg/500px-Pakapaka_logo_2020.svg.png",
+            "Cartoonito.lat|Cartoonito|Infantiles|Cartoonito/index.m3u8|https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Cartoonito_logo.svg/1280px-Cartoonito_logo.svg.png",
+            "Tooncast.lat|Tooncast|Infantiles|Tooncast/index.m3u8",
+            "XtremaCartoons.ar|Xtrema Cartoons|Infantiles|https://stmv6.voxtvhd.com.br/xtremacartoons/xtremacartoons/playlist.m3u8|i:X2d8y4e.png",
+
+            // === 5. CINE Y SERIES ===
             "HBO.us|HBO HD|Cine y Series|HBO_HD/index.m3u8",
             "HBO2.lat|HBO 2|Cine y Series|http://181.209.37.74:8001/play/a07o/index.m3u8?token=miguel2026",
             "HBOFamily.lat|HBO Family|Cine y Series|http://181.209.37.74:8001/play/a07p/index.m3u8?token=miguel2026",
@@ -747,19 +792,7 @@
             "XtremaCineClasico.ar|Xtrema Cine Clásico|Cine y Series|https://stmv6.voxtvhd.com.br/cineclasico/cineclasico/playlist.m3u8|i:j91M4Yf.png",
             "XtremaTerror.ar|Xtrema Terror|Cine y Series|https://stmv6.voxtvhd.com.br/cineterror/cineterror/playlist.m3u8|i:FcaTUym.png",
 
-            // === INFANTILES ===
-            "CartoonNetwork.lat|Cartoon Network HD|Infantiles|http://181.209.37.74:8001/play/a083/index.m3u8?token=miguel2026|w:thumb/8/80/Cartoon_Network_2010_logo.svg/500px-Cartoon_Network_2010_logo.svg.png",
-            "Nickelodeon.lat|Nickelodeon|Infantiles|http://181.209.37.74:8001/play/a08y/index.m3u8?token=miguel2026|w:thumb/7/7a/Nickelodeon_2023_logo.svg/500px-Nickelodeon_2023_logo.svg.png",
-            "NickJr.lat|Nick Jr|Infantiles|http://181.209.37.74:8001/play/a07s/index.m3u8?token=miguel2026",
-            "DisneyChannel.lat|Disney Channel HD|Infantiles|http://181.209.37.74:8001/play/a06w/index.m3u8?token=miguel2026|w:f/ff/2024_Disney_Channel_text_logo.svg",
-            "DisneyJunior.lat|Disney Junior|Infantiles|http://181.209.37.74:8001/play/a08x/index.m3u8?token=miguel2026|w:e/e3/2024_Disney_Jr._Logo.svg",
-            "DiscoveryKids.lat|Discovery Kids|Infantiles|http://181.209.37.74:8001/play/a07r/index.m3u8?token=miguel2026|w:thumb/d/dc/2016_Discovery_Kids_logo.svg/1164px-2016_Discovery_Kids_logo.svg.png",
-            "Pakapaka.ar|Pakapaka|Infantiles|http://181.209.37.74:8001/play/a05t/index.m3u8?token=miguel2026|w:thumb/0/01/Pakapaka_logo_2020.svg/500px-Pakapaka_logo_2020.svg.png",
-            "Cartoonito.lat|Cartoonito|Infantiles|Cartoonito/index.m3u8|https://upload.wikimedia.org/wikipedia/en/thumb/4/42/Cartoonito_logo.svg/1280px-Cartoonito_logo.svg.png",
-            "Tooncast.lat|Tooncast|Infantiles|Tooncast/index.m3u8",
-            "XtremaCartoons.ar|Xtrema Cartoons|Infantiles|https://stmv6.voxtvhd.com.br/xtremacartoons/xtremacartoons/playlist.m3u8|i:X2d8y4e.png",
-
-            // === DOCUMENTALES ===
+            // === 6. DOCUMENTALES ===
             "History.lat|History Channel|Documentales|http://181.209.37.74:8001/play/a090/index.m3u8?token=miguel2026",
             "History2.lat|History 2|Documentales|http://181.209.37.74:8001/play/a06n/index.m3u8?token=miguel2026",
             "TheHistoryChannel.lat|The History Channel HD|Documentales|http://181.209.37.74:8001/play/a09g/index.m3u8?token=miguel2026",
@@ -771,7 +804,7 @@
             "InvestigationDiscovery.lat|ID Investigation|Documentales|Discovery_Investigation_HD/index.m3u8",
             "DiscoveryTurbo.lat|Discovery Turbo|Documentales|Discovery_Turbo_HD/index.m3u8",
 
-            // === ENTRETENIMIENTO ===
+            // === 7. ENTRETENIMIENTO ===
             "AE.lat|A&E HD|Entretenimiento|http://181.209.37.74:8001/play/a09h/index.m3u8?token=miguel2026|w:thumb/7/77/A%2BE_Network_logo.svg/500px-A%2BE_Network_logo.svg.png",
             "AdultSwimLatinAmerica.us|Adult Swim|Entretenimiento|http://181.209.37.74:8001/play/a08d/index.m3u8?token=miguel2026|w:thumb/e/e4/Adult_Swim_2003_logo.svg/960px-Adult_Swim_2003_logo.svg.png",
             "ComedyCentral.lat|Comedy Central HD|Entretenimiento|http://181.209.37.74:8001/play/a072/index.m3u8?token=miguel2026|w:thumb/3/33/Comedy_Central_2018.svg/500px-Comedy_Central_2018.svg.png",
@@ -786,7 +819,7 @@
             "MetroTV.ar|Metro TV|Entretenimiento|http://181.209.37.74:8001/play/a06l/index.m3u8?token=miguel2026|i:7f7M7zl.png",
             "CarasTV.ar|Caras TV|Entretenimiento|https://unlimited1-us.dps.live/carastv/carastv.smil/playlist.m3u8|i:7dl4yQY.jpeg",
 
-            // === MÚSICA ===
+            // === 8. MÚSICA ===
             "MTV.lat|MTV|Música|http://181.209.37.74:8001/play/a06r/index.m3u8?token=miguel2026|w:thumb/a/a2/MTV_2021_symbol.svg/500px-MTV_2021_symbol.svg.png",
             "MTV00s.uk|MTV 00s|Música|http://181.209.37.74:8001/play/a092/index.m3u8?token=miguel2026",
             "HTV.lat|HTV|Música|http://181.209.37.74:8001/play/a06t/index.m3u8?token=miguel2026",
@@ -808,7 +841,22 @@
             "RadioYguazuTV.ar|Radio Yguazú TV|Música|https://live.enhdtv.com:8081/radioiguazutv/index.m3u8|i:kVi0ICm.png",
             "Radiocanal.ar|Radiocanal San Francisco|Música|http://204.199.3.2/.m3u8|b:NNyDWsz/download-8.png",
 
-            // === REGIONALES (CANALES DEL INTERIOR, PROVINCIALES Y SEÑALES LOCALES) ===
+            // === 9. EDUCACIÓN ===
+            "Encuentro.ar|ENCUENTRO HD|Educación|http://181.209.37.74:8001/play/a0ds/index.m3u8?token=miguel2026|w:thumb/3/30/Canal_Encuentro_logo_2020.svg/500px-Canal_Encuentro_logo_2020.svg.png",
+            "CanalA.ar|Canal a|Educación|http://181.209.37.74:8001/play/a06d/index.m3u8?token=miguel2026",
+            "CanalUniversidad.ar|Canal Universidad|Educación|https://videostream.shockmedia.com.ar/hls/canaluniversidadmdp/canaluniversidadmdp.m3u8|i:trmPKYw.png",
+            "TVUniversidad.ar|TV Universidad|Educación|https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8|i:0MXsQ25.png",
+
+            // === 10. RELIGIOSOS ===
+            "UnifeTV.ar|Unife TV|Religiosos|https://cdn.mycloudstream.io/hls/live/broadcast/xundwjvp/index.m3u8|i:TLM592m.png",
+            "CanalOrbe21.ar|Canal Orbe 21|Religiosos|https://stream.arcast.net:4443/canal21/ngrp:canal21_all/playlist.m3u8|i:USD6Wn8.png",
+            "CanalSantaMaria.ar|Canal Santa María|Religiosos|https://streaming.telered.com.ar/santa-maria/streaming/mystream.m3u8|https://www.canalsantamaria.com.ar/images/santamaria_logo.jpg",
+            "Canal13Jujuy.ar|Canal 13 Jujuy TV|Religiosos|https://genexservicios.com:19360/canal13jujuy/canal13jujuy.m3u8|i:lmKLiJ3.jpg",
+            "Canal6VientoRecio.ar|Canal 6 Viento Recio|Religiosos|https://stmvideo6.livecastv.com/vientorecio/vientorecio/playlist.m3u8|i:liyTNzK.png",
+            "RadioSublimeGraciaTV.ar|Radio Sublime Gracia TV|Religiosos|https://5f700d5b2c46f.streamlock.net/sublime/sublime/playlist.m3u8|b:P9jgTz4/c49b986afb751882bcbee57f9c9b20d7-350x210.png",
+            "TVManaArgentina.ar|TV Maná Argentina|Religiosos|https://w2.manasat.com/tvmana-ar/smil:tvmana-ar.smil/playlist.m3u8|i:jars0mP.png",
+
+            // === 11. REGIONALES (Al último) ===
             "TelefeInterior.ar|Telefe Interior|Regionales|http://200.91.32.158:8080/telefehdvalle/index.m3u8|w:thumb/c/cc/Telefe_%28nuevo_logo%29.png/960px-Telefe_%28nuevo_logo%29.png",
             "QuanticaTV.ar|Quantica TV|Regionales|https://videostream.shockmedia.com.ar:19360/quanticatv/quanticatv.m3u8|i:6f8EYC2.jpeg",
             "LAMIL35TV.ar|LAMIL35 TV|Regionales|https://vd01.streaminghd.net.ar:3349/live/bzuctkgnlive.m3u8|https://www.appcreator24.com/srv/imgs/gen/3544498_ico.png",
@@ -890,28 +938,15 @@
             "TVPublicaFueguina.ar|TV Pública Fueguina|Regionales|https://nd106.republicaservers.com/hls/c8094/index.m3u8|i:4dUvFqa.png",
             "TVSolidaria.ar|TV Solidaria|Regionales|https://canadaremar2.todostreaming.es/live/argentina-web.m3u8|i:M0fMypR.png",
             "Uniteve.ar|Uniteve|Regionales|https://vivo.solumedia.com:19360/uniteve/uniteve.m3u8|https://pbs.twimg.com/profile_images/720276300888453120/a_SDOmBc_400x400.jpg",
-            "VillaManteroTV.ar|Villa Mantero TV|Regionales|https://micanal.ovh/livestreams/515.AUTOOAAZ721F.m3u8|i:mmEenTm.png",
-
-            // === EDUCACIÓN ===
-            "Encuentro.ar|ENCUENTRO HD|Educación|http://181.209.37.74:8001/play/a0ds/index.m3u8?token=miguel2026|w:thumb/3/30/Canal_Encuentro_logo_2020.svg/500px-Canal_Encuentro_logo_2020.svg.png",
-            "CanalA.ar|Canal a|Educación|http://181.209.37.74:8001/play/a06d/index.m3u8?token=miguel2026",
-            "CanalUniversidad.ar|Canal Universidad|Educación|https://videostream.shockmedia.com.ar/hls/canaluniversidadmdp/canaluniversidadmdp.m3u8|i:trmPKYw.png",
-            "TVUniversidad.ar|TV Universidad|Educación|https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8|i:0MXsQ25.png",
-
-            // === RELIGIOSOS ===
-            "UnifeTV.ar|Unife TV|Religiosos|https://cdn.mycloudstream.io/hls/live/broadcast/xundwjvp/index.m3u8|i:TLM592m.png",
-            "CanalOrbe21.ar|Canal Orbe 21|Religiosos|https://stream.arcast.net:4443/canal21/ngrp:canal21_all/playlist.m3u8|i:USD6Wn8.png",
-            "CanalSantaMaria.ar|Canal Santa María|Religiosos|https://streaming.telered.com.ar/santa-maria/streaming/mystream.m3u8|https://www.canalsantamaria.com.ar/images/santamaria_logo.jpg",
-            "Canal13Jujuy.ar|Canal 13 Jujuy TV|Religiosos|https://genexservicios.com:19360/canal13jujuy/canal13jujuy.m3u8|i:lmKLiJ3.jpg",
-            "Canal6VientoRecio.ar|Canal 6 Viento Recio|Religiosos|https://stmvideo6.livecastv.com/vientorecio/vientorecio/playlist.m3u8|i:liyTNzK.png",
-            "RadioSublimeGraciaTV.ar|Radio Sublime Gracia TV|Religiosos|https://5f700d5b2c46f.streamlock.net/sublime/sublime/playlist.m3u8|b:P9jgTz4/c49b986afb751882bcbee57f9c9b20d7-350x210.png",
-            "TVManaArgentina.ar|TV Maná Argentina|Religiosos|https://w2.manasat.com/tvmana-ar/smil:tvmana-ar.smil/playlist.m3u8|i:jars0mP.png"
+            "VillaManteroTV.ar|Villa Mantero TV|Regionales|https://micanal.ovh/livestreams/515.AUTOOAAZ721F.m3u8|i:mmEenTm.png"
         ];
 
+        // Se mapean los canales empezando en la frecuencia número 2
         const channels = rawChannels.map((l, i) => {
             const [id, name, group, path, logo] = l.split("|");
             const raw = /^https?:/.test(path) ? path : STREAM_BASE + path;
-            return { i, id, name, group, logo: logoUrl(logo), alt: null, repo: null, proxiedUrl: buildProxyUrl(raw) };
+            const channelNumber = i + 2;
+            return { i, channelNumber, id, name, group, logo: logoUrl(logo), alt: null, repo: null, proxiedUrl: buildProxyUrl(raw) };
         });
 
         const $ = id => document.getElementById(id);
@@ -946,10 +981,13 @@
         const btnPwa = $('btn-pwa');
         const playerShow = $('player-show');
         const playerProgress = $('player-progress');
+        const channelOsd = $('channel-osd');
 
         let hlsInstance = null, selectedCategory = 'ALL', currentChannel = null, retries = 0;
         let epgScheduleData = {}, epgState = 'loading', epgMatched = 0, epgDone = 0;
         let favs = new Set(store.get('ip_favs', []));
+        let channelInputBuffer = '';
+        let channelInputTimer = null;
 
         // ---------- LOGOS ----------
         function logoChain(ch) {
@@ -1213,7 +1251,7 @@
             store.set('ip_last', channel.id);
             setLogo(playerChLogo, channel);
             setLogo(epgChLogo, channel);
-            playerChTitle.innerText = channel.name;
+            playerChTitle.innerText = `${channel.channelNumber}. ${channel.name}`;
             epgChName.innerText = channel.name;
             epgChGroup.innerText = channel.group;
             updateDynamicEpg();
@@ -1228,7 +1266,6 @@
         video.addEventListener('error', () => currentChannel && !hlsInstance && streamFail());
         $('btn-retry').onclick = () => { retries = 0; loadStream(); };
 
-        // Controles del player
         const wrap = $('video-wrapper'), btnCenter = $('btn-center'), btnMute = $('btn-mute'),
               volRange = $('vol-range'), btnPip = $('btn-pip');
         let uiTimer = null;
@@ -1319,9 +1356,53 @@
             }
         });
 
-        // ---------- SOPORTE DE CONTROL REMOTO Y TECLADO ----------
-        document.addEventListener('keydown', e => {
-            if (e.target.tagName === 'INPUT') return;
+        // ---------- ZAPPING NUMÉRICO Y CONTROL REMOTO (GLOBAL / FULLSCREEN) ----------
+        function showOsd(text) {
+            channelOsd.innerText = text;
+            channelOsd.classList.add('show');
+            clearTimeout(channelInputTimer);
+            channelInputTimer = setTimeout(() => {
+                channelOsd.classList.remove('show');
+                channelInputBuffer = '';
+            }, 1800);
+        }
+
+        function jumpToChannelByNumber(num) {
+            clearTimeout(channelInputTimer);
+            channelOsd.classList.remove('show');
+            channelInputBuffer = '';
+            const found = channels.find(c => c.channelNumber === num);
+            if (found) {
+                switchChannel(found);
+            }
+        }
+
+        function handleNumberInput(numChar) {
+            channelInputBuffer += numChar;
+            showOsd(`CH ${channelInputBuffer}`);
+            const targetNum = parseInt(channelInputBuffer, 10);
+            const maxNum = channels.length + 1;
+            if (targetNum > maxNum || channelInputBuffer.length >= 3) {
+                jumpToChannelByNumber(targetNum);
+            }
+        }
+
+        const handleGlobalKeyDown = e => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            // Zapping por número (0-9)
+            if (e.key >= '0' && e.key <= '9') {
+                e.preventDefault();
+                handleNumberInput(e.key);
+                return;
+            }
+
+            if (e.key === 'Enter' && channelInputBuffer) {
+                e.preventDefault();
+                jumpToChannelByNumber(parseInt(channelInputBuffer, 10));
+                return;
+            }
+
             const k = e.key.toLowerCase();
             
             if (e.key === 'ArrowUp' || e.key === 'ChannelUp') {
@@ -1349,7 +1430,10 @@
                 video.muted = false;
                 video.volume = Math.max(0, video.volume - 0.05);
             }
-        });
+        };
+
+        window.addEventListener('keydown', handleGlobalKeyDown);
+        document.addEventListener('keydown', handleGlobalKeyDown);
 
         if ('mediaSession' in navigator) {
             navigator.mediaSession.setActionHandler('nexttrack', () => stepChannel(1));
@@ -1366,7 +1450,7 @@
             const q = searchInput.value.toLowerCase();
             return channels.filter(ch =>
                 (selectedCategory === 'ALL' || (selectedCategory === '★ Favoritos' ? favs.has(ch.id) : ch.group === selectedCategory)) &&
-                (ch.name.toLowerCase().includes(q) || ch.group.toLowerCase().includes(q)));
+                (ch.name.toLowerCase().includes(q) || ch.group.toLowerCase().includes(q) || String(ch.channelNumber) === q));
         }
 
         function renderChannels() {
@@ -1376,6 +1460,7 @@
                 const card = document.createElement('div');
                 card.className = 'channel-card' + (currentChannel && currentChannel.i === ch.i ? ' active' : '');
                 card.innerHTML = `
+                    <div class="ch-num">${ch.channelNumber}</div>
                     <div class="ch-logo-small">
                         ${first ? `<img loading="lazy" referrerpolicy="no-referrer" src="${esc(first)}" data-s="0" data-ch="${ch.i}" alt="" onerror="handleImgError(this)">`
                                 : `<span class="fallback-txt" style="--h:${hue(ch)}">${esc(initials(ch))}</span>`}
