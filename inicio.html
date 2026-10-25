@@ -45,7 +45,7 @@
                 add('manifest', URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' })));
                 add('apple-touch-icon', i192);
                 add('icon', i192, 'image/png');
-            } catch (e) { console.warn('PWA:', e); }
+            } catch (e) { /* PWA no disponible */ }
         })();
     </script>
     <meta name="mobile-web-app-capable" content="yes">
@@ -246,25 +246,40 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* OSD para zapping numérico */
+        /* Cartel de número de canal (estilo TV: solo texto con sombra, arriba a la derecha) */
         .channel-osd {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(5, 7, 12, 0.85);
-            border: 2px solid var(--rio-gold);
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 20px;
+            top: 14px;
+            right: 18px;
             z-index: 50;
             display: none;
-            box-shadow: 0 0 20px rgba(255, 184, 0, 0.4);
-            letter-spacing: 1px;
+            pointer-events: none;
+            text-align: right;
+            line-height: 1;
+            background: none;
+            border: 0;
+            padding: 0;
         }
-        .channel-osd.show { display: block; }
+        .channel-osd.show { display: block; animation: osdIn 0.15s ease-out; }
+        .channel-osd .osd-num {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            color: var(--rio-gold);
+            text-shadow: 0 0 2px #000, 0 1px 3px #000, 0 2px 8px rgba(0, 0, 0, 0.9);
+        }
+        .channel-osd .osd-note {
+            font-size: 11px; font-weight: 600; color: #fff; margin-top: 4px;
+            white-space: nowrap;
+            text-shadow: 0 0 2px #000, 0 1px 4px #000;
+        }
+        .video-wrapper:fullscreen .channel-osd, .video-wrapper:-webkit-full-screen .channel-osd { top: 28px; right: 36px; }
+        .video-wrapper:fullscreen .channel-osd .osd-num, .video-wrapper:-webkit-full-screen .channel-osd .osd-num { font-size: 40px; }
+        .video-wrapper:fullscreen .channel-osd .osd-note, .video-wrapper:-webkit-full-screen .channel-osd .osd-note { font-size: 16px; }
+        @keyframes osdIn { from { opacity: 0; } to { opacity: 1; } }
+        @media (prefers-reduced-motion: reduce) { .channel-osd.show { animation: none; } }
 
         .vp-ui {
             position: absolute; inset: 0; z-index: 10;
@@ -570,7 +585,7 @@
             <main class="player-stage">
                 <div class="video-wrapper paused ui" id="video-wrapper">
                     <video id="video-element" autoplay playsinline></video>
-                    <div class="channel-osd" id="channel-osd">CH --</div>
+                    <div class="channel-osd" id="channel-osd"></div>
                     <div class="stream-msg" id="stream-msg">
                         <div class="spinner"></div>
                         <i class="fa-solid fa-triangle-exclamation err-ic"></i>
@@ -665,6 +680,11 @@
 
         const LOGOS_URL = "https://iptv-org.github.io/api/logos.json";
         const CHANNELS_URL = "https://iptv-org.github.io/api/channels.json";
+
+        // Tiempo (ms) que espera por un 2.º/3.er dígito al cambiar de canal por número
+        const ZAP_DELAY = 800;
+        // Tiempo (ms) que queda visible el cartel con el número de canal
+        const OSD_TIME = 3500;
 
         // ---------- FUENTES EPG (XMLTV) ----------
         const ES1 = n => `https://epgshare01.online/epgshare01/epg_ripper_${n}.xml.gz`;
@@ -948,7 +968,7 @@
             const [id, name, group, path, logo] = l.split("|");
             const raw = /^https?:/.test(path) ? path : STREAM_BASE + path;
             const channelNumber = i + 2;
-            return { i, channelNumber, id, name, group, logo: logoUrl(logo), alt: null, repo: null, proxiedUrl: buildProxyUrl(raw) };
+            return { i, channelNumber, id, name, group, logo: logoUrl(logo), alt: null, repo: null, rawUrl: raw, proxiedUrl: buildProxyUrl(raw) };
         });
 
         const $ = id => document.getElementById(id);
@@ -988,8 +1008,7 @@
         let hlsInstance = null, selectedCategory = 'ALL', currentChannel = null, retries = 0;
         let epgScheduleData = {}, epgState = 'loading', epgMatched = 0, epgDone = 0;
         let favs = new Set(store.get('ip_favs', []));
-        let channelInputBuffer = '';
-        let channelInputTimer = null;
+        let zapBuffer = '', zapTimer = null, osdTimer = null;
 
         // ---------- LOGOS ----------
         function logoChain(ch) {
@@ -1178,7 +1197,7 @@
                             (data[cid] = data[cid] || []).push({ start: s, stop: e, title: t.textContent, desc: p.querySelector('desc')?.textContent || '' });
                         });
                         claimed.forEach(id => { if (data[id]) data[id].sort((x, y) => x.start - y.start); });
-                    } catch (err) { console.warn('EPG:', err); }
+                    } catch (err) { /* fuente EPG inválida: se ignora */ }
                 }
                 epgMatched = Object.keys(data).length;
                 updateDynamicEpg();
@@ -1215,7 +1234,7 @@
             epgNext.innerHTML = list.slice(i + 1, i + 4).map(n => `<div><b>${hhmm(n.start)}</b>${esc(n.title)}</div>`).join('');
         }
 
-        // ---------- REPRODUCTOR HLS MÁXIMA VELOCIDAD (BÚFER 2 SEGUNDOS) ----------
+        // ---------- REPRODUCTOR HLS + PROXY ----------
         function setMsg(text, retry) {
             $('stream-msg-txt').innerText = text || '';
             $('btn-retry').hidden = !retry;
@@ -1224,44 +1243,152 @@
             m.classList.toggle('err', !!retry);
         }
         const tryPlay = () => video.play().catch(() => { setMsg(''); syncPlay(); });
-        function streamFail() { setMsg(`No se pudo cargar ${currentChannel.name}. Puede que el canal esté caído.`, true); }
+        function streamFail(detail) {
+            setMsg(`No se pudo cargar ${currentChannel.name}.${detail ? ' (' + detail + ')' : ''} Puede que el canal esté caído o que el proxy no llegue al stream.`, true);
+        }
 
-        function loadStream() {
+        // ---- Proxy: toda URL del stream sale por el proxy ----
+        // Devuelve la URL real del stream a partir de una URL del proxy
+        const unproxy = u => u.startsWith(PROXY_SERVER) ? decodeURIComponent(u.slice(PROXY_SERVER.length)) : u;
+
+        // Convierte un link de una playlist (relativo, absoluto, o ya reescrito por el proxy) en URL real
+        function resolveLink(link, baseUp) {
+            const u = link.trim();
+            if (u.startsWith(PROXY_SERVER)) return unproxy(u);
+            // Link que el proxy dejó relativo a su propio host: /api/proxy?url=...
+            if (/^\/?(api\/)?proxy\?url=/.test(u)) {
+                try { return decodeURIComponent(u.replace(/^[^=]*=/, '')); } catch { return u; }
+            }
+            let abs;
+            try { abs = new URL(u, baseUp); } catch { return u; }
+            // Algunos paneles exigen ?token= también en cada segmento
+            try {
+                const b = new URL(baseUp), tk = b.searchParams.get('token');
+                if (tk && abs.origin === b.origin && !abs.searchParams.has('token')) abs.searchParams.set('token', tk);
+            } catch {}
+            return abs.href;
+        }
+
+        // Reescribe TODOS los links de la playlist (segmentos, sub-playlists, keys, mapas) a URLs del proxy
+        function rewritePlaylist(text, baseUp) {
+            const wrapLink = l => /^(data|blob):/i.test(l) ? l : buildProxyUrl(resolveLink(l, baseUp));
+            return text.split(/\r?\n/).map(line => {
+                const t = line.trim();
+                if (!t) return line;
+                if (t[0] === '#') return line.replace(/URI="([^"]+)"/g, (_, u) => `URI="${wrapLink(u)}"`);
+                return wrapLink(t);
+            }).join('\n');
+        }
+
+        // Loader de hls.js: pide todo por el proxy y entrega las playlists ya reescritas,
+        // así ningún segmento ni sub-playlist http:// se pide directo al servidor del stream.
+        function makeProxyLoader() {
+            const Base = Hls.DefaultConfig && Hls.DefaultConfig.loader;
+            if (!Base) return null;
+            return class ProxyLoader {
+                constructor(cfg) { this.inner = new Base(cfg); }
+                get context() { return this.inner.context; }
+                get stats() { return this.inner.stats; }
+                destroy() { this.inner.destroy(); }
+                abort() { this.inner.abort(); }
+                getCacheAge() { return this.inner.getCacheAge ? this.inner.getCacheAge() : null; }
+                getResponseHeader(n) { return this.inner.getResponseHeader ? this.inner.getResponseHeader(n) : null; }
+                load(context, config, cb) {
+                    const orig = context.url;
+                    const upstream = unproxy(orig);
+                    if (!/^(data|blob):/i.test(orig) && !orig.startsWith(PROXY_SERVER)) context.url = buildProxyUrl(orig);
+                    const restore = () => { context.url = orig; };
+                    this.inner.load(context, config, {
+                        onSuccess: (r, s, c, n) => {
+                            restore();
+                            if (r && typeof r.data === 'string' && /^\s*#EXTM3U/.test(r.data)) {
+                                r = { ...r, url: orig, data: rewritePlaylist(r.data, upstream) };
+                            }
+                            cb.onSuccess(r, s, c, n);
+                        },
+                        onError: (e, c, n, s) => { restore(); cb.onError(e, c, n, s); },
+                        onTimeout: (s, c, n) => { restore(); cb.onTimeout(s, c, n); },
+                        onAbort: cb.onAbort ? (s, c, n) => { restore(); cb.onAbort(s, c, n); } : undefined,
+                        onProgress: cb.onProgress
+                    });
+                }
+            };
+        }
+
+        function startStream(mode) {
+            const ch = currentChannel, raw = ch.rawUrl;
+            // Los streams HTTP salen SIEMPRE por el proxy; solo los https pueden reintentar directo
+            const canDirect = raw.startsWith('https:');
             setMsg('Cargando…');
             if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
             video.removeAttribute('src');
+
             if (window.Hls && Hls.isSupported()) {
-                // CONFIGURACIÓN EXTREMA DE BAJA LATENCIA Y ARRANQUE INMEDIATO
-                hlsInstance = new Hls({
+                const ProxyLoader = mode === 'proxy' ? makeProxyLoader() : null;
+                const cfg = {
                     enableWorker: true,
-                    lowLatencyMode: true,
-                    backBufferLength: 0,
-                    maxBufferLength: 2,
-                    maxMaxBufferLength: 5,
-                    maxBufferSize: 10 * 1024 * 1024,
-                    liveSyncDuration: 1,
-                    liveMaxLatencyDuration: 4,
+                    lowLatencyMode: false,
+                    backBufferLength: 30,
+                    maxBufferLength: 10,
+                    maxMaxBufferLength: 20,
+                    maxBufferSize: 30 * 1024 * 1024,
+                    liveSyncDurationCount: 3,
+                    liveMaxLatencyDurationCount: 8,
                     liveDurationInfinity: true,
-                    highBufferWatchdogPeriod: 1,
-                    fastSwitch: true
-                });
-                hlsInstance.loadSource(currentChannel.proxiedUrl);
-                hlsInstance.attachMedia(video);
-                hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => tryPlay());
-                hlsInstance.on(Hls.Events.ERROR, (_, d) => {
+                    startFragPrefetch: true,
+                    // El proxy en Cloud Run puede tardar en "despertar": tiempos más holgados
+                    manifestLoadingTimeOut: 15000, manifestLoadingMaxRetry: 2, manifestLoadingRetryDelay: 500,
+                    levelLoadingTimeOut: 15000, levelLoadingMaxRetry: 3, levelLoadingRetryDelay: 500,
+                    fragLoadingTimeOut: 20000, fragLoadingMaxRetry: 3, fragLoadingRetryDelay: 500
+                };
+                if (ProxyLoader) cfg.loader = ProxyLoader;
+                const hls = new Hls(cfg);
+                hlsInstance = hls;
+                let lastErr = '';
+
+                hls.loadSource(mode === 'proxy' && !ProxyLoader ? ch.proxiedUrl : raw);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => tryPlay());
+                hls.on(Hls.Events.ERROR, (_, d) => {
+                    const code = d.response && d.response.code ? ' HTTP ' + d.response.code : '';
+                    lastErr = d.details + code;
                     if (!d.fatal) return;
                     if (retries++ < 3) {
-                        if (d.type === Hls.ErrorTypes.MEDIA_ERROR) hlsInstance.recoverMediaError();
-                        else setTimeout(() => hlsInstance && hlsInstance.startLoad(), 500 * retries);
-                    } else streamFail();
+                        if (d.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+                        else setTimeout(() => hlsInstance === hls && hls.startLoad(), 500 * retries);
+                        return;
+                    }
+                    if (mode === 'proxy' && canDirect) { retries = 0; startStream('direct'); return; }
+                    streamFail(lastErr);
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = currentChannel.proxiedUrl;
+                // HLS nativo (Safari/iOS): no admite loader propio, usa el m3u8 por el proxy
+                video.src = mode === 'proxy' ? ch.proxiedUrl : raw;
                 tryPlay();
-            } else streamFail();
+            } else streamFail('HLS no soportado');
+        }
+        const loadStream = () => startStream('proxy');
+
+        // ---------- CARTEL DE NÚMERO DE CANAL ----------
+        function renderOsd(num, note) {
+            channelOsd.innerHTML =
+                `<div class="osd-num">CH - ${esc(num)}</div>` +
+                (note ? `<div class="osd-note">${esc(note)}</div>` : '');
+            channelOsd.classList.remove('show');
+            void channelOsd.offsetWidth;
+            channelOsd.classList.add('show');
+        }
+        function hideOsdLater(ms) {
+            clearTimeout(osdTimer);
+            osdTimer = setTimeout(() => channelOsd.classList.remove('show'), ms);
+        }
+        function showChannelOsd(ch) {
+            renderOsd(ch.channelNumber);
+            hideOsdLater(OSD_TIME);
         }
 
         function switchChannel(channel) {
+            clearTimeout(zapTimer); zapBuffer = '';
             currentChannel = channel; retries = 0;
             store.set('ip_last', channel.id);
             setLogo(playerChLogo, channel);
@@ -1272,6 +1399,7 @@
             updateDynamicEpg();
             loadStream();
             showUi();
+            showChannelOsd(channel);
             renderChannels();
             document.querySelector('.channel-card.active')?.scrollIntoView({ block: 'nearest' });
         }
@@ -1371,94 +1499,55 @@
             }
         });
 
-        // ---------- ZAPPING INSTANTÁNEO Y AUTOMÁTICO (HASTA NÚMEROS GRANDES) ----------
-        function showOsd(text) {
-            channelOsd.innerText = text;
-            channelOsd.classList.add('show');
-            clearTimeout(channelInputTimer);
-            channelOsd.classList.add('show');
+        // ---------- ZAPPING POR NÚMERO ----------
+        function commitNumber() {
+            clearTimeout(zapTimer);
+            const typed = zapBuffer, n = parseInt(typed, 10);
+            zapBuffer = '';
+            const ch = channels.find(c => c.channelNumber === n);
+            if (ch) switchChannel(ch);
+            else { renderOsd(typed, 'Canal inexistente'); hideOsdLater(1500); }
+        }
+        function typeDigit(d) {
+            if (zapBuffer.length >= 3) zapBuffer = '';
+            zapBuffer += d;
+            clearTimeout(osdTimer);
+            renderOsd(zapBuffer);
+            clearTimeout(zapTimer);
+            // ¿Existe algún canal con más dígitos que empiece igual? (ej: 2 → 20, 25…)
+            const more = channels.some(c => { const s = String(c.channelNumber); return s.length > zapBuffer.length && s.startsWith(zapBuffer); });
+            if (!more || zapBuffer.length >= 3) commitNumber();
+            else zapTimer = setTimeout(commitNumber, ZAP_DELAY);
         }
 
-        function jumpToChannelByNumber(num) {
-            clearTimeout(channelInputTimer);
-            channelOsd.classList.remove('show');
-            channelInputBuffer = '';
-            const found = channels.find(c => c.channelNumber === num);
-            if (found) {
-                switchChannel(found);
-            }
-        }
+        // ---------- TECLADO / CONTROL REMOTO (un solo listener) ----------
+        function onKey(e) {
+            const tag = e.target.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || e.ctrlKey || e.metaKey || e.altKey) return;
+            const k = e.key, kc = e.keyCode;
 
-        function handleNumberInput(numChar) {
-            channelInputBuffer += numChar;
-            showOsd(`CH ${channelInputBuffer}`);
-            const targetNum = parseInt(channelInputBuffer, 10);
-            
-            // Verificamos si existe exacto
-            const exactMatch = channels.some(c => c.channelNumber === targetNum);
-            // Verificamos si hay canales mayores que empiecen con esta combinación (ej: 2 y 25)
-            const possibleMoreDigits = channels.some(c => String(c.channelNumber).startsWith(channelInputBuffer) && String(c.channelNumber) !== channelInputBuffer);
+            if (/^[0-9]$/.test(k)) { e.preventDefault(); typeDigit(k); return; }
 
-            if (!possibleMoreDigits || channelInputBuffer.length >= 3) {
-                // Si no hay más combinaciones posibles o ya tipeó 3 dígitos, salta de inmediato
-                jumpToChannelByNumber(targetNum);
-            } else {
-                // Si es un número válido pero puede seguir escribiendo (ej: apretó 2, y existe el 20, 21...),
-                // damos un lapso súper corto de 250ms para completar el segundo dígito, o salta si no presiona más.
-                clearTimeout(channelInputTimer);
-                channelInputTimer = setTimeout(() => {
-                    jumpToChannelByNumber(targetNum);
-                }, 250); 
-            }
-        }
-
-        const handleGlobalKeyDown = e => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-            // Zapping por número (0-9)
-            if (e.key >= '0' && e.key <= '9') {
-                e.preventDefault();
-                handleNumberInput(e.key);
+            if (k === 'Enter') {
+                if (zapBuffer) { e.preventDefault(); commitNumber(); }
+                else if (currentChannel && e.target === document.body) showChannelOsd(currentChannel);
                 return;
             }
+            if (k === 'i' || k === 'Info' || kc === 457) { if (currentChannel) showChannelOsd(currentChannel); return; }
 
-            if (e.key === 'Enter' && channelInputBuffer) {
-                e.preventDefault();
-                jumpToChannelByNumber(parseInt(channelInputBuffer, 10));
-                return;
-            }
+            // CH+ / CH- del control: suben o bajan el número de canal
+            if (k === 'ChannelUp' || kc === 427 || k === 'PageUp')     { e.preventDefault(); stepChannel(1); return; }
+            if (k === 'ChannelDown' || kc === 428 || k === 'PageDown') { e.preventDefault(); stepChannel(-1); return; }
+            // Flechas: se mueven por la lista
+            if (k === 'ArrowUp')   { e.preventDefault(); stepChannel(-1); return; }
+            if (k === 'ArrowDown') { e.preventDefault(); stepChannel(1); return; }
 
-            const k = e.key.toLowerCase();
-            
-            if (e.key === 'ArrowUp' || e.key === 'ChannelUp') {
-                e.preventDefault();
-                stepChannel(-1);
-            }
-            else if (e.key === 'ArrowDown' || e.key === 'ChannelDown') {
-                e.preventDefault();
-                stepChannel(1);
-            }
-            else if (k === 'k' || e.key === 'MediaPlayPause') {
-                e.preventDefault();
-                togglePlay();
-            }
-            else if (k === 'm' || e.key === 'AudioVolumeMute') {
-                btnMute.click();
-            }
-            else if (e.key === 'AudioVolumeUp' || e.key === 'VolumeUp') {
-                e.preventDefault();
-                video.muted = false;
-                video.volume = Math.min(1, video.volume + 0.05);
-            }
-            else if (e.key === 'AudioVolumeDown' || e.key === 'VolumeDown') {
-                e.preventDefault();
-                video.muted = false;
-                video.volume = Math.max(0, video.volume - 0.05);
-            }
-        };
-
-        window.addEventListener('keydown', handleGlobalKeyDown);
-        document.addEventListener('keydown', handleGlobalKeyDown);
+            if (k.toLowerCase() === 'k' || k === 'MediaPlayPause') { e.preventDefault(); togglePlay(); return; }
+            if (k.toLowerCase() === 'm' || k === 'AudioVolumeMute') { btnMute.click(); return; }
+            if (k === 'AudioVolumeUp' || k === 'VolumeUp')     { e.preventDefault(); video.muted = false; video.volume = Math.min(1, video.volume + 0.05); return; }
+            if (k === 'AudioVolumeDown' || k === 'VolumeDown') { e.preventDefault(); video.muted = false; video.volume = Math.max(0, video.volume - 0.05); }
+        }
+        window.addEventListener('keydown', onKey);
 
         if ('mediaSession' in navigator) {
             navigator.mediaSession.setActionHandler('nexttrack', () => stepChannel(1));
